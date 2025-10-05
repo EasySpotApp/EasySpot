@@ -26,9 +26,9 @@ class BleService : Service() {
 
     private var isForeground = false
 
-    private val bluetoothStateReceiver: BluetoothStateReceiver = BluetoothStateReceiver(this)
-    private val bluetoothGattServer: GattServer = GattServer(this)
-    private val bluetoothLeAdvertiser: Advertiser = Advertiser(this)
+    private lateinit var bluetoothStateReceiver: BluetoothStateReceiver
+    private lateinit var bluetoothGattServer: GattServer
+    private lateinit var bluetoothLeAdvertiser: Advertiser
 
     override fun onCreate() {
         super.onCreate()
@@ -45,6 +45,10 @@ class BleService : Service() {
             NotificationManager.IMPORTANCE_LOW
         )
         notificationManager.createNotificationChannel(serviceChannel)
+
+        bluetoothStateReceiver = BluetoothStateReceiver(this)
+        bluetoothGattServer = GattServer(this)
+        bluetoothLeAdvertiser = Advertiser(this)
     }
 
     override fun onDestroy() {
