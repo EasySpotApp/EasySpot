@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EasySpot">
         <service
-            android:name=".HotspotService"
+            android:name=".BleService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="connectedDevice" />

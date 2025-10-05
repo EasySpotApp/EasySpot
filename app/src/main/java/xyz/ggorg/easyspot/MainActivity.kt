@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
 
-                println("Not all permissions granted: $permissions")
+                Log.w(this.toString(), "Not all permissions granted: $permissions")
 
                 val intent =
                     Intent(
@@ -63,9 +64,7 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
 
-        permissionsNotGranted.forEach {
-            println("Permission not granted: $it")
-        }
+        Log.w(this.toString(), "Permissions not granted: $permissionsNotGranted")
 
         if (permissionsNotGranted.isNotEmpty()) {
             requestPermissionsLauncher.launch(permissionsNotGranted.toTypedArray())
@@ -97,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                     Manifest.permission.BLUETOOTH_ADVERTISE
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                val intent = Intent(this, HotspotService::class.java)
+                val intent = Intent(this, BleService::class.java)
                 stopService(intent)
             }
         }
@@ -108,21 +107,24 @@ class MainActivity : AppCompatActivity() {
 
         if (bluetoothAdapter == null) {
             Toast.makeText(this, "Device doesn't support Bluetooth.", Toast.LENGTH_LONG).show()
+            Log.e(this.toString(), "Bluetooth not supported")
             finish()
         }
 
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, "Device doesn't support Bluetooth LE.", Toast.LENGTH_LONG)
                 .show()
+            Log.e(this.toString(), "Bluetooth LE not supported")
             finish()
         }
 
-        if (!bluetoothAdapter.isMultipleAdvertisementSupported()) {
+        if (bluetoothAdapter.isEnabled && !bluetoothAdapter.isMultipleAdvertisementSupported()) {
             Toast.makeText(
                 this,
                 "Device doesn't support Bluetooth LE Advertising.",
                 Toast.LENGTH_LONG
             ).show()
+            Log.e(this.toString(), "Bluetooth LE Advertising not supported")
             finish()
         }
     }
@@ -132,8 +134,8 @@ class MainActivity : AppCompatActivity() {
         val bluetoothAdapter = bluetoothManager.adapter
 
         if (bluetoothAdapter.isEnabled) {
-            val intent = Intent(this, HotspotService::class.java)
-            startService(intent)
+            val intent = Intent(this, BleService::class.java)
+            ContextCompat.startForegroundService(this, intent)
         } else {
             startActivity(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
