@@ -64,13 +64,7 @@ class BleService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(this.toString(), "Start command received")
 
-        if (bluetoothAdapter?.isEnabled == true) {
-            startForeground()
-        } else {
-            Log.e(this.toString(), "$this was started, but Bluetooth is not enabled")
-            stopSelf()
-        }
-
+        startForeground()
         return START_STICKY
     }
 
