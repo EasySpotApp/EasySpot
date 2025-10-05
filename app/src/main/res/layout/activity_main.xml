@@ -50,17 +50,6 @@
                 android:layout_height="wrap_content"
                 android:text="Stop" />
 
-            <TextView
-                android:id="@+id/serverState"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Server: off" />
-
-            <TextView
-                android:id="@+id/advertiserState"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Advertiser: off" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
