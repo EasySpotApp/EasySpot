@@ -307,7 +307,7 @@ class BleService : Service() {
             setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
             setConnectable(true)
             setTimeout(0)
-            setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
+            setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_LOW)
         }.build()
 
         val data = AdvertiseData.Builder().apply {
