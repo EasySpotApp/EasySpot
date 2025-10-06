@@ -78,32 +78,44 @@ class GattServer(
                 "Characteristic ${characteristic?.uuid} write $formattedValue by ${device?.address}"
             )
 
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                with(NotificationManagerCompat.from(context)) {
-                    notify(
-                        1, NotificationCompat.Builder(
-                            context,
-                            EVENT_CHANNEL_ID
-                        )
-                            .apply {
-                                setSmallIcon(R.drawable.ic_launcher_foreground)
-                                setContentTitle("Characteristic write")
-                                setContentText("Characteristic ${characteristic?.uuid} write $formattedValue by ${device?.address}")
-                                setPriority(NotificationCompat.PRIORITY_HIGH)
-                                setAutoCancel(true)
-                            }.build()
-                    )
-                }
+            val newHotspotState = when (value?.firstOrNull()) {
+                0x00.toByte() -> false
+                0x01.toByte() -> true
+                else -> null
             }
 
-            if (value?.firstOrNull() == 0x01.toByte()) {
-                ShizukuTetherHelper.setHotspotEnabledShizuku(true)
-            } else if (value?.firstOrNull() == 0x00.toByte()) {
-                ShizukuTetherHelper.setHotspotEnabledShizuku(false)
+            if (newHotspotState != null) {
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    with(NotificationManagerCompat.from(context)) {
+                        notify(
+                            1, NotificationCompat.Builder(
+                                context,
+                                EVENT_CHANNEL_ID
+                            )
+                                .apply {
+                                    setSmallIcon(R.drawable.ic_launcher_foreground)
+                                    setContentTitle("EasySpot")
+                                    setContentText(
+                                        "Hotspot got ${
+                                            if (newHotspotState) {
+                                                "enabled"
+                                            } else {
+                                                "disabled"
+                                            }
+                                        } by ${device?.address}!"
+                                    )
+                                    setPriority(NotificationCompat.PRIORITY_HIGH)
+                                    setAutoCancel(true)
+                                }.build()
+                        )
+                    }
+                }
+
+                ShizukuTetherHelper.setHotspotEnabledShizuku(newHotspotState)
             }
 
             if (responseNeeded) {
