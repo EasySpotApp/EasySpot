@@ -105,8 +105,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        val intent = Intent(this, BleService::class.java)
-        ContextCompat.startForegroundService(this, intent)
+        checkAndRequestPermissions()
     }
 
     private fun checkBluetoothSupport() {
