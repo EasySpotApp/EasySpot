@@ -48,4 +48,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.shizukuApi)
+    implementation(libs.shizukuProvider)
+    implementation(libs.hiddenapibypass)
 }

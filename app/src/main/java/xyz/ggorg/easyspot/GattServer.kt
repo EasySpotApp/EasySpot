@@ -100,6 +100,12 @@ class GattServer(
                 }
             }
 
+            if (value?.firstOrNull() == 0x01.toByte()) {
+                ShizukuTetherHelper.setHotspotEnabledShizuku(true)
+            } else if (value?.firstOrNull() == 0x00.toByte()) {
+                ShizukuTetherHelper.setHotspotEnabledShizuku(false)
+            }
+
             if (responseNeeded) {
                 gattServer!!.sendResponse(
                     device,

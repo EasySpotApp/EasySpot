@@ -14,6 +14,8 @@ import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import rikka.shizuku.Shizuku
+import rikka.shizuku.Shizuku.OnRequestPermissionResultListener
 import xyz.ggorg.easyspot.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -37,8 +39,29 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val allPermissionsGranted = permissions.entries.all { it.value }
             if (allPermissionsGranted) {
-                @SuppressLint("MissingPermission")
-                enableBluetooth()
+                if (Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED) {
+                    if (Shizuku.shouldShowRequestPermissionRationale()) {
+                        Toast.makeText(
+                            this,
+                            "The app requires all permissions to function correctly.",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        Log.w(this.toString(), "Shizuku not granted")
+                        val intent =
+                            Intent(
+                                android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                android.net.Uri.fromParts("package", packageName, null)
+                            )
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Shizuku.requestPermission(0)
+                    }
+                } else {
+                    onAllPermissionsGranted()
+                }
             } else {
                 Toast.makeText(
                     this,
@@ -74,6 +97,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val shizukuPermissionListener =
+        OnRequestPermissionResultListener { requestCode: Int, grantResult: Int ->
+            if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                onAllPermissionsGranted()
+            } else {
+                Toast.makeText(
+                    this,
+                    "The app requires all permissions to function correctly.",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                Log.w(this.toString(), "Shizuku permission not granted")
+
+                val intent =
+                    Intent(
+                        android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        android.net.Uri.fromParts("package", packageName, null)
+                    )
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +131,8 @@ class MainActivity : AppCompatActivity() {
 
         bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         checkBluetoothSupport()
+
+        Shizuku.addRequestPermissionResultListener(shizukuPermissionListener)
 
         binding.startButton.setOnClickListener {
             checkAndRequestPermissions()
@@ -100,6 +148,12 @@ class MainActivity : AppCompatActivity() {
                 stopService(intent)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        Shizuku.removeRequestPermissionResultListener(shizukuPermissionListener)
     }
 
     override fun onStart() {
@@ -133,6 +187,11 @@ class MainActivity : AppCompatActivity() {
             Log.e(this.toString(), "Bluetooth LE Advertising not supported")
             finish()
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun onAllPermissionsGranted() {
+        enableBluetooth()
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
