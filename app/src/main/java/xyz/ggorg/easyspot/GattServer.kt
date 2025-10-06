@@ -71,9 +71,11 @@ class GattServer(
                 value
             )
 
+            val formattedValue = value?.joinToString(separator = " ") { String.format("%02X", it) }
+
             Log.d(
                 this.toString(),
-                "Characteristic ${characteristic?.uuid} write ${value.toString()} by ${device?.address}"
+                "Characteristic ${characteristic?.uuid} write $formattedValue by ${device?.address}"
             )
 
             if (ActivityCompat.checkSelfPermission(
@@ -90,7 +92,7 @@ class GattServer(
                             .apply {
                                 setSmallIcon(R.drawable.ic_launcher_foreground)
                                 setContentTitle("Characteristic write")
-                                setContentText("Characteristic ${characteristic?.uuid} write ${value.toString()} by ${device?.address}")
+                                setContentText("Characteristic ${characteristic?.uuid} write $formattedValue by ${device?.address}")
                                 setPriority(NotificationCompat.PRIORITY_HIGH)
                                 setAutoCancel(true)
                             }.build()
