@@ -50,6 +50,12 @@
                 android:layout_height="wrap_content"
                 android:text="Stop" />
 
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="The service state is visible in your notification panel. See the GitHub repo for a client application." />
+
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
