@@ -92,7 +92,8 @@ class GattServer(
                 ) {
                     with(NotificationManagerCompat.from(context)) {
                         notify(
-                            1, NotificationCompat.Builder(
+                            System.currentTimeMillis().toInt(),
+                            NotificationCompat.Builder(
                                 context,
                                 EVENT_CHANNEL_ID
                             )
