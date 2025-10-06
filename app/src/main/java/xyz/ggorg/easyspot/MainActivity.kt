@@ -12,34 +12,21 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import rikka.shizuku.Shizuku
 import rikka.shizuku.Shizuku.OnRequestPermissionResultListener
+import xyz.ggorg.easyspot.PermissionUtils.permissionsToRequest
 import xyz.ggorg.easyspot.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var bluetoothManager: BluetoothManager
 
-    companion object {
-        val essentialPermissions = arrayOf(
-            Manifest.permission.BLUETOOTH_ADVERTISE,
-            Manifest.permission.BLUETOOTH_CONNECT,
-        )
-
-        val nonEssentialPermissions = arrayOf(
-            Manifest.permission.POST_NOTIFICATIONS,
-        )
-
-        val permissionsToRequest = essentialPermissions + nonEssentialPermissions
-    }
-
     private val requestPermissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val allPermissionsGranted = permissions.entries.all { it.value }
             if (allPermissionsGranted) {
-                if (Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED) {
+                if (!ShizukuUtils.isPermissionGranted()) {
                     if (Shizuku.shouldShowRequestPermissionRationale()) {
                         Toast.makeText(
                             this,
@@ -57,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                         startActivity(intent)
                         finish()
                     } else {
-                        Shizuku.requestPermission(0)
+                        ShizukuUtils.requestPermission(0)
                     }
                 } else {
                     onAllPermissionsGranted()
@@ -83,6 +70,32 @@ class MainActivity : AppCompatActivity() {
         }
 
     private fun checkAndRequestPermissions() {
+        when (ShizukuUtils.getShizukuState(this)) {
+            ShizukuState.NOT_INSTALLED -> {
+                Toast.makeText(
+                    this,
+                    "Shizuku is not installed. Please install it from the Play Store.",
+                    Toast.LENGTH_LONG
+                ).show()
+                ShizukuUtils.openPlayStoreListing(this)
+                finish()
+                return
+            }
+
+            ShizukuState.NOT_RUNNING -> {
+                Toast.makeText(
+                    this,
+                    "Shizuku is not running. Please start the Shizuku service.",
+                    Toast.LENGTH_LONG
+                ).show()
+                ShizukuUtils.startShizukuActivity(this)
+                finish()
+                return
+            }
+
+            else -> {}
+        }
+
         val permissionsNotGranted = permissionsToRequest.filter {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
@@ -92,14 +105,38 @@ class MainActivity : AppCompatActivity() {
         if (permissionsNotGranted.isNotEmpty()) {
             requestPermissionsLauncher.launch(permissionsNotGranted.toTypedArray())
         } else {
-            @SuppressLint("MissingPermission")
-            enableBluetooth()
+            if (!ShizukuUtils.isPermissionGranted()) {
+                if (Shizuku.shouldShowRequestPermissionRationale()) {
+                    Toast.makeText(
+                        this,
+                        "The app requires all permissions to function correctly.",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    Log.w(this.toString(), "Shizuku not granted")
+                    val intent =
+                        Intent(
+                            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            android.net.Uri.fromParts("package", packageName, null)
+                        )
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    ShizukuUtils.requestPermission(0)
+                }
+            } else {
+                onAllPermissionsGranted()
+            }
         }
     }
 
     private val shizukuPermissionListener =
         OnRequestPermissionResultListener { requestCode: Int, grantResult: Int ->
-            if (grantResult == PackageManager.PERMISSION_GRANTED) {
+            if (grantResult == PackageManager.PERMISSION_GRANTED && PermissionUtils.arePermissionsGranted(
+                    this
+                )
+            ) {
                 onAllPermissionsGranted()
             } else {
                 Toast.makeText(
@@ -139,11 +176,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.stopButton.setOnClickListener {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.BLUETOOTH_ADVERTISE
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
+            if (PermissionUtils.arePermissionsGranted(this)) {
                 val intent = Intent(this, BleService::class.java)
                 stopService(intent)
             }

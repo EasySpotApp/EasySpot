@@ -1,5 +1,7 @@
 package xyz.ggorg.easyspot
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,8 +13,9 @@ import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.RequiresPermission
 import androidx.core.app.ServiceCompat
-import androidx.core.content.ContextCompat
+import xyz.ggorg.easyspot.PermissionUtils.needsPermissions
 
 class BleService : Service() {
     companion object {
@@ -33,7 +36,7 @@ class BleService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        Log.d(this.toString(), "Starting background service")
+        Log.d(this.toString(), "Creating service")
 
         bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
 
@@ -73,11 +76,7 @@ class BleService : Service() {
 
         Log.d(this.toString(), "Starting foreground service")
 
-        val permissionsGranted = MainActivity.essentialPermissions.all {
-            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
-        }
-
-        if (!permissionsGranted) {
+        if (!PermissionUtils.arePermissionsGranted(this)) {
             Log.e(this.toString(), "Essential permissions not granted")
             stopSelf()
             return
@@ -125,20 +124,16 @@ class BleService : Service() {
     }
 
     fun start() {
-        val permissionsGranted = MainActivity.essentialPermissions.all {
-            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
-        }
-        if (permissionsGranted) {
+        @SuppressLint("MissingPermission") // TODO
+        needsPermissions(this) @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT) {
             bluetoothGattServer.start()
             bluetoothLeAdvertiser.start()
         }
     }
 
     fun stop() {
-        val permissionsGranted = MainActivity.essentialPermissions.all {
-            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
-        }
-        if (permissionsGranted) {
+        @SuppressLint("MissingPermission") // TODO
+        needsPermissions(this) @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT) {
             bluetoothLeAdvertiser.stop()
             bluetoothGattServer.stop()
         }
