@@ -1,4 +1,4 @@
-package xyz.ggorg.easyspot
+package xyz.ggorg.easyspot.service
 
 import android.Manifest
 import android.bluetooth.BluetoothManager
@@ -10,6 +10,7 @@ import android.content.Context
 import android.os.ParcelUuid
 import android.util.Log
 import androidx.annotation.RequiresPermission
+import xyz.ggorg.easyspot.HotspotProfile
 
 class Advertiser(context: Context) {
     private val bluetoothManager: BluetoothManager =

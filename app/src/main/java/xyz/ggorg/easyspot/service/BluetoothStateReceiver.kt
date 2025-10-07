@@ -1,16 +1,18 @@
-package xyz.ggorg.easyspot
+package xyz.ggorg.easyspot.service
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import androidx.annotation.RequiresPermission
+import xyz.ggorg.easyspot.PermissionUtils
 
 class BluetoothStateReceiver(private val bleService: BleService) : BroadcastReceiver() {
     fun register(context: Context) {
-        val filter = android.content.IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
         context.registerReceiver(this, filter)
 
         Log.d(context.toString(), "Bluetooth state receiver registered")

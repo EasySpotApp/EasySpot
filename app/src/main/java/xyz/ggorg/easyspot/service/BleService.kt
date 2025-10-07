@@ -1,4 +1,4 @@
-package xyz.ggorg.easyspot
+package xyz.ggorg.easyspot.service
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -15,6 +15,8 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
+import xyz.ggorg.easyspot.PermissionUtils
+import xyz.ggorg.easyspot.R
 
 class BleService : Service() {
     companion object {

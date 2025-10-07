@@ -1,4 +1,4 @@
-package xyz.ggorg.easyspot
+package xyz.ggorg.easyspot.service
 
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver

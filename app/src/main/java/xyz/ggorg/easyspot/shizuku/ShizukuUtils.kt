@@ -1,4 +1,4 @@
-package xyz.ggorg.easyspot
+package xyz.ggorg.easyspot.shizuku
 
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.net.toUri
 import rikka.shizuku.Shizuku
-
 
 object ShizukuUtils {
     private const val PACKAGE_NAME = "moe.shizuku.privileged.api"

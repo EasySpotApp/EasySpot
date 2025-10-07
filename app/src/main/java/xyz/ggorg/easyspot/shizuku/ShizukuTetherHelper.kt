@@ -1,11 +1,10 @@
-package xyz.ggorg.easyspot
+package xyz.ggorg.easyspot.shizuku
 
 import android.annotation.SuppressLint
 import android.net.IIntResultListener
 import android.net.ITetheringConnector
 import android.net.TetheringRequestParcel
 import android.util.Log
-import org.lsposed.hiddenapibypass.HiddenApiBypass
 import rikka.shizuku.ShizukuBinderWrapper
 import rikka.shizuku.SystemServiceHelper
 
@@ -38,8 +37,6 @@ object ShizukuTetherHelper {
             Log.e(this.toString(), "setHotspotEnabledShizuku: reached max retry count")
             return false
         }
-
-        HiddenApiBypass.addHiddenApiExemptions("Landroid/net")
 
         return runCatching {
             val tetheringMgr = SystemServiceHelper.getSystemService(TETHERING_SERVICE)

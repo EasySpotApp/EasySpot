@@ -1,4 +1,4 @@
-package xyz.ggorg.easyspot
+package xyz.ggorg.easyspot.service
 
 import android.Manifest
 import android.app.NotificationChannel
@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattServer
 import android.bluetooth.BluetoothGattServerCallback
 import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
@@ -16,6 +17,9 @@ import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import xyz.ggorg.easyspot.HotspotProfile
+import xyz.ggorg.easyspot.R
+import xyz.ggorg.easyspot.shizuku.ShizukuTetherHelper
 
 class GattServer(
     private val context: Context,
@@ -44,9 +48,9 @@ class GattServer(
     private val callback = object : BluetoothGattServerCallback() {
         override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
             super.onConnectionStateChange(device, status, newState)
-            if (newState == android.bluetooth.BluetoothProfile.STATE_CONNECTED) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.d(this.toString(), "Device connected: ${device?.address}")
-            } else if (newState == android.bluetooth.BluetoothProfile.STATE_DISCONNECTED) {
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.d(this.toString(), "Device disconnected: ${device?.address}")
             }
         }
