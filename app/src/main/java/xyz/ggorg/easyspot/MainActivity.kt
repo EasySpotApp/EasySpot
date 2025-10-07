@@ -176,10 +176,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.stopButton.setOnClickListener {
-            if (PermissionUtils.arePermissionsGranted(this)) {
-                val intent = Intent(this, BleService::class.java)
-                stopService(intent)
-            }
+            BleService.tryStart(this)
         }
     }
 
@@ -232,8 +229,7 @@ class MainActivity : AppCompatActivity() {
         val bluetoothAdapter = bluetoothManager.adapter
 
         if (bluetoothAdapter.isEnabled) {
-            val intent = Intent(this, BleService::class.java)
-            ContextCompat.startForegroundService(this, intent)
+            BleService.tryStart(this)
         } else {
             startActivity(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }

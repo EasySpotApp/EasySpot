@@ -35,14 +35,4 @@ object PermissionUtils {
             ) == PackageManager.PERMISSION_GRANTED
         } && ShizukuUtils.isRunning(context)
     }
-
-    fun needsPermissions(
-        context: Context,
-        essential: Boolean = true,
-        block: () -> Unit
-    ) {
-        if (arePermissionsGranted(context, essential)) {
-            block()
-        }
-    }
 }

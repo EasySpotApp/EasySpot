@@ -11,12 +11,6 @@ class ServiceStarter : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(this.toString(), "Received intent: ${intent.action} - starting service")
 
-        if (!PermissionUtils.arePermissionsGranted(context)) {
-            Log.w(this.toString(), "Not all permissions granted - not starting service")
-            return
-        }
-
-        val serviceIntent = Intent(context, BleService::class.java)
-        context.startForegroundService(serviceIntent)
+        BleService.tryStart(context)
     }
 }

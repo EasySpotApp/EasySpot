@@ -1,6 +1,5 @@
 package xyz.ggorg.easyspot
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
@@ -8,18 +7,39 @@ import android.app.NotificationManager
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.os.IBinder
 import android.util.Log
-import androidx.annotation.RequiresPermission
 import androidx.core.app.ServiceCompat
-import xyz.ggorg.easyspot.PermissionUtils.needsPermissions
+import androidx.core.content.ContextCompat
 
 class BleService : Service() {
     companion object {
         private const val SERVICE_CHANNEL_ID = "HotspotServiceChannel"
+
+        fun tryStart(context: Context) {
+            if (!PermissionUtils.arePermissionsGranted(context)) {
+                Log.w(this.toString(), "Not all permissions granted - not starting service")
+                return
+            }
+
+            val bluetoothManager = context.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
+            val bluetoothAdapter = bluetoothManager.adapter
+
+            if (bluetoothAdapter == null ||
+                !context.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) ||
+                (bluetoothAdapter.isEnabled && !bluetoothAdapter.isMultipleAdvertisementSupported)
+            ) {
+                Log.w(this.toString(), "Bluetooth LE Advertising not supported")
+                return
+            }
+
+            val serviceIntent = Intent(context, BleService::class.java)
+            ContextCompat.startForegroundService(context, serviceIntent)
+        }
     }
 
     private var bluetoothManager: BluetoothManager? = null
@@ -82,7 +102,10 @@ class BleService : Service() {
             return
         }
 
-        if (bluetoothAdapter == null || !packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) || (bluetoothAdapter!!.isEnabled && !bluetoothAdapter!!.isMultipleAdvertisementSupported)) {
+        if (bluetoothAdapter == null ||
+            !packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) ||
+            (bluetoothAdapter!!.isEnabled && !bluetoothAdapter!!.isMultipleAdvertisementSupported)
+        ) {
             Log.e(this.toString(), "Bluetooth LE Advertising not supported")
             stopSelf()
             return
@@ -123,19 +146,25 @@ class BleService : Service() {
         isForeground = false
     }
 
+    @SuppressLint("MissingPermission")
     fun start() {
-        @SuppressLint("MissingPermission") // TODO
-        needsPermissions(this) @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT) {
-            bluetoothGattServer.start()
-            bluetoothLeAdvertiser.start()
+        if (!PermissionUtils.arePermissionsGranted(this)) {
+            Log.e(this.toString(), "Essential permissions not granted")
+            return
         }
+
+        bluetoothGattServer.start()
+        bluetoothLeAdvertiser.start()
     }
 
+    @SuppressLint("MissingPermission")
     fun stop() {
-        @SuppressLint("MissingPermission") // TODO
-        needsPermissions(this) @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT) {
-            bluetoothLeAdvertiser.stop()
-            bluetoothGattServer.stop()
+        if (!PermissionUtils.arePermissionsGranted(this)) {
+            Log.e(this.toString(), "Essential permissions not granted")
+            return
         }
+
+        bluetoothLeAdvertiser.stop()
+        bluetoothGattServer.stop()
     }
 }
