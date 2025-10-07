@@ -75,7 +75,7 @@ class GattServer(
 
             Log.d(
                 this.toString(),
-                "Characteristic ${characteristic?.uuid} write $formattedValue by ${device?.address}"
+                "Characteristic ${characteristic?.uuid} write $formattedValue by ${device?.address} (${device?.name})"
             )
 
             val newHotspotState = when (value?.firstOrNull()) {
@@ -107,7 +107,9 @@ class GattServer(
                                             } else {
                                                 "disabled"
                                             }
-                                        } by ${device?.address}!"
+                                        } by ${
+                                            device?.name ?: device?.address
+                                        }!"
                                     )
                                     setPriority(NotificationCompat.PRIORITY_HIGH)
                                     setAutoCancel(true)

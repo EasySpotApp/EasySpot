@@ -55,7 +55,6 @@ object ShizukuTetherHelper {
                             }
 
                             TETHER_ERROR_NO_CHANGE_TETHERING_PERMISSION -> {
-                                // retry
                                 setHotspotEnabledShizuku(
                                     enabled,
                                     false,
