@@ -20,7 +20,7 @@ class BleService : Service() {
     companion object {
         private const val SERVICE_CHANNEL_ID = "HotspotServiceChannel"
 
-        fun tryStart(context: Context) {
+        fun tryStartForeground(context: Context) {
             if (!PermissionUtils.arePermissionsGranted(context)) {
                 Log.w(this.toString(), "Not all permissions granted - not starting service")
                 return
@@ -46,8 +46,6 @@ class BleService : Service() {
     private var bluetoothAdapter: BluetoothAdapter?
         get() = bluetoothManager?.adapter
         set(_) {}
-
-    private var isForeground = false
 
     private lateinit var bluetoothStateReceiver: BluetoothStateReceiver
     private lateinit var bluetoothGattServer: GattServer
@@ -79,7 +77,10 @@ class BleService : Service() {
 
         Log.d(this.toString(), "Destroying service")
 
-        stopForeground()
+        bluetoothStateReceiver.unregister(this)
+        stop()
+
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }
 
     override fun onBind(intent: Intent): IBinder? = null
@@ -92,8 +93,6 @@ class BleService : Service() {
     }
 
     private fun startForeground() {
-        if (isForeground) return
-
         Log.d(this.toString(), "Starting foreground service")
 
         if (!PermissionUtils.arePermissionsGranted(this)) {
@@ -124,26 +123,11 @@ class BleService : Service() {
             ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
         )
 
-        isForeground = true
-
         bluetoothStateReceiver.register(this)
 
         if (bluetoothAdapter!!.isEnabled) {
             start()
         }
-    }
-
-    private fun stopForeground() {
-        if (!isForeground) return
-
-        Log.d(this.toString(), "Stopping foreground service")
-
-        bluetoothStateReceiver.unregister(this)
-
-        stop()
-
-        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
-        isForeground = false
     }
 
     @SuppressLint("MissingPermission")

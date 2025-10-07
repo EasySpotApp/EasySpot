@@ -11,6 +11,6 @@ class ServiceStarter : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(this.toString(), "Received intent: ${intent.action} - starting service")
 
-        BleService.tryStart(context)
+        BleService.tryStartForeground(context)
     }
 }

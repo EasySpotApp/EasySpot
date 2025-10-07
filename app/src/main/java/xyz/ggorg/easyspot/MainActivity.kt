@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.stopButton.setOnClickListener {
-            BleService.tryStart(this)
+            BleService.tryStartForeground(this)
         }
     }
 
@@ -229,7 +229,7 @@ class MainActivity : AppCompatActivity() {
         val bluetoothAdapter = bluetoothManager.adapter
 
         if (bluetoothAdapter.isEnabled) {
-            BleService.tryStart(this)
+            BleService.tryStartForeground(this)
         } else {
             startActivity(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
