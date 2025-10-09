@@ -20,27 +20,24 @@ fun MainScaffold(mainActivity: MainActivity) {
     Scaffold(
         topBar = {
             TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
-                title = {
-                    Text(stringResource(R.string.app_name))
-                }
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                title = { Text(stringResource(R.string.app_name)) },
             )
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
-        Box(Modifier.padding(innerPadding)) {
-            TempUi(mainActivity)
-        }
+        Box(Modifier.padding(innerPadding)) { TempUi(mainActivity) }
     }
 }
 
-//@Preview(showSystemUi = true)
-//@Composable
-//private fun Preview() {
+// @Preview(showSystemUi = true)
+// @Composable
+// private fun Preview() {
 //    EasySpotPreview {
 //        MainScaffold()
 //    }
-//}
+// }

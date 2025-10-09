@@ -8,9 +8,5 @@ import xyz.ggorg.easyspot.ui.theme.EasySpotTheme
 
 @Composable
 fun EasySpotPreview(content: @Composable () -> Unit) {
-    EasySpotTheme {
-        Box(Modifier.fillMaxSize()) {
-            content()
-        }
-    }
+    EasySpotTheme { Box(Modifier.fillMaxSize()) { content() } }
 }

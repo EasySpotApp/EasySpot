@@ -30,11 +30,12 @@ object ShizukuUtils {
         }
     }
 
-    fun isShizukuInstalled(context: Context): Boolean = try {
-        context.packageManager.getApplicationInfo(PACKAGE_NAME, 0).enabled
-    } catch (_: PackageManager.NameNotFoundException) {
-        false
-    }
+    fun isShizukuInstalled(context: Context): Boolean =
+        try {
+            context.packageManager.getApplicationInfo(PACKAGE_NAME, 0).enabled
+        } catch (_: PackageManager.NameNotFoundException) {
+            false
+        }
 
     fun isPermissionGranted(): Boolean {
         return Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED
@@ -52,9 +53,10 @@ object ShizukuUtils {
                     .setData(PLAY_STORE_APP_URI)
             )
         } catch (_: ActivityNotFoundException) {
-            val i = Intent(Intent.ACTION_VIEW)
-                .addCategory(Intent.CATEGORY_BROWSABLE)
-                .setData(PLAY_STORE_APP_WEBURI)
+            val i =
+                Intent(Intent.ACTION_VIEW)
+                    .addCategory(Intent.CATEGORY_BROWSABLE)
+                    .setData(PLAY_STORE_APP_WEBURI)
 
             if (i.resolveActivity(context.packageManager) != null) {
                 context.startActivity(i)
@@ -66,9 +68,7 @@ object ShizukuUtils {
         runCatching {
             context.startActivity(
                 Intent(Intent.ACTION_MAIN).apply {
-                    component = ComponentName(
-                        PACKAGE_NAME, "moe.shizuku.manager.MainActivity"
-                    )
+                    component = ComponentName(PACKAGE_NAME, "moe.shizuku.manager.MainActivity")
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
             )
@@ -82,5 +82,5 @@ enum class ShizukuState {
     NOT_INSTALLED,
     NOT_RUNNING,
     PERMISSION_DENIED,
-    RUNNING
+    RUNNING,
 }

@@ -29,7 +29,7 @@ object ShizukuTetherHelper {
         enabled: Boolean,
         exemptFromEntitlementCheck: Boolean = true,
         shouldShowEntitlementUi: Boolean = false,
-        retryCount: Int = 0
+        retryCount: Int = 0,
     ): Boolean {
         Log.d(this.toString(), "entering setHotspotEnabledShizuku(enabled = ${enabled})...")
 
@@ -39,82 +39,93 @@ object ShizukuTetherHelper {
         }
 
         return runCatching {
-            val tetheringMgr = SystemServiceHelper.getSystemService(TETHERING_SERVICE)
-                .let(::ShizukuBinderWrapper)
-                .let(ITetheringConnector.Stub::asInterface)
+                val tetheringMgr =
+                    SystemServiceHelper.getSystemService(TETHERING_SERVICE)
+                        .let(::ShizukuBinderWrapper)
+                        .let(ITetheringConnector.Stub::asInterface)
 
-            if (enabled) {
-                val resultListener = object : IIntResultListener.Stub() {
-                    override fun onResult(resultCode: Int) {
-                        when (resultCode) {
-                            TETHER_ERROR_NO_ERROR -> {
-                                Log.d(this.toString(), "setHotspotEnabledShizuku(true) - success")
-                            }
+                if (enabled) {
+                    val resultListener =
+                        object : IIntResultListener.Stub() {
+                            override fun onResult(resultCode: Int) {
+                                when (resultCode) {
+                                    TETHER_ERROR_NO_ERROR -> {
+                                        Log.d(
+                                            this.toString(),
+                                            "setHotspotEnabledShizuku(true) - success",
+                                        )
+                                    }
 
-                            TETHER_ERROR_NO_CHANGE_TETHERING_PERMISSION -> {
-                                setHotspotEnabledShizuku(
-                                    enabled,
-                                    false,
-                                    shouldShowEntitlementUi,
-                                    retryCount + 1
-                                )
-                            }
+                                    TETHER_ERROR_NO_CHANGE_TETHERING_PERMISSION -> {
+                                        setHotspotEnabledShizuku(
+                                            enabled,
+                                            false,
+                                            shouldShowEntitlementUi,
+                                            retryCount + 1,
+                                        )
+                                    }
 
-                            else -> {
-                                Log.d(
-                                    this.toString(),
-                                    "setHotspotEnabledShizuku(true) - failed. code = $resultCode"
-                                )
-                            }
-                        }
-                    }
-                }
-
-                tetheringMgr.startTethering(
-                    createTetheringRequestParcel(
-                        exemptFromEntitlementCheck,
-                        shouldShowEntitlementUi
-                    ) as TetheringRequestParcel,
-                    "com.android.shell",
-                    "",
-                    resultListener
-                )
-            } else {
-                val resultListener = object : IIntResultListener.Stub() {
-                    override fun onResult(resultCode: Int) {
-                        when (resultCode) {
-                            TETHER_ERROR_NO_ERROR -> {
-                                Log.d(this.toString(), "setHotspotEnabledShizuku(false) - success")
-                            }
-
-                            else -> {
-                                Log.e(
-                                    this.toString(),
-                                    "setHotspotEnabledShizuku(false) - failed. code = $resultCode"
-                                )
+                                    else -> {
+                                        Log.d(
+                                            this.toString(),
+                                            "setHotspotEnabledShizuku(true) - failed. code = $resultCode",
+                                        )
+                                    }
+                                }
                             }
                         }
-                    }
+
+                    tetheringMgr.startTethering(
+                        createTetheringRequestParcel(
+                            exemptFromEntitlementCheck,
+                            shouldShowEntitlementUi,
+                        )
+                            as TetheringRequestParcel,
+                        "com.android.shell",
+                        "",
+                        resultListener,
+                    )
+                } else {
+                    val resultListener =
+                        object : IIntResultListener.Stub() {
+                            override fun onResult(resultCode: Int) {
+                                when (resultCode) {
+                                    TETHER_ERROR_NO_ERROR -> {
+                                        Log.d(
+                                            this.toString(),
+                                            "setHotspotEnabledShizuku(false) - success",
+                                        )
+                                    }
+
+                                    else -> {
+                                        Log.e(
+                                            this.toString(),
+                                            "setHotspotEnabledShizuku(false) - failed. code = $resultCode",
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                    tetheringMgr.stopTethering(
+                        TETHERING_WIFI,
+                        "com.android.shell",
+                        "",
+                        resultListener,
+                    )
                 }
 
-                tetheringMgr.stopTethering(
-                    TETHERING_WIFI,
-                    "com.android.shell",
-                    "",
-                    resultListener
-                )
+                true
             }
-
-            true
-        }.getOrElse {
-            Log.e(this.toString(), it.toString())
-            false
-        }
+            .getOrElse {
+                Log.e(this.toString(), it.toString())
+                false
+            }
     }
 
     private fun createTetheringRequest(
         exemptFromEntitlementCheck: Boolean = true,
-        shouldShowEntitlementUi: Boolean = false
+        shouldShowEntitlementUi: Boolean = false,
     ): Any {
         return Class.forName("android.net.TetheringManager\$TetheringRequest\$Builder").run {
             val setExemptFromEntitlementCheck =
@@ -135,13 +146,10 @@ object ShizukuTetherHelper {
 
     private fun createTetheringRequestParcel(
         exemptFromEntitlementCheck: Boolean = true,
-        shouldShowEntitlementUi: Boolean = false
+        shouldShowEntitlementUi: Boolean = false,
     ): Any {
         return getRequestParcel(
-            createTetheringRequest(
-                exemptFromEntitlementCheck,
-                shouldShowEntitlementUi
-            )
+            createTetheringRequest(exemptFromEntitlementCheck, shouldShowEntitlementUi)
         )
     }
 

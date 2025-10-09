@@ -21,7 +21,7 @@ output.json
 
 # IntelliJ
 *.iml
-.idea/
+# .idea/
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
@@ -304,3 +304,4 @@ obj/
 
 app/debug/
 app/release/
+!.idea/ktfmt.xml

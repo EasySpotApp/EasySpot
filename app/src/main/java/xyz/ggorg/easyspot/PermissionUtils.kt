@@ -8,10 +8,8 @@ import androidx.core.content.ContextCompat
 import xyz.ggorg.easyspot.shizuku.ShizukuUtils
 
 object PermissionUtils {
-    val essentialPermissions = arrayOf(
-        Manifest.permission.BLUETOOTH_ADVERTISE,
-        Manifest.permission.BLUETOOTH_CONNECT,
-    )
+    val essentialPermissions =
+        arrayOf(Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.BLUETOOTH_CONNECT)
 
     val nonEssentialPermissions =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -23,17 +21,15 @@ object PermissionUtils {
     val permissionsToRequest = essentialPermissions + nonEssentialPermissions
 
     fun arePermissionsGranted(context: Context, essential: Boolean = true): Boolean {
-        val permissionsToCheck = if (essential) {
-            essentialPermissions
-        } else {
-            permissionsToRequest
-        }
+        val permissionsToCheck =
+            if (essential) {
+                essentialPermissions
+            } else {
+                permissionsToRequest
+            }
 
         return permissionsToCheck.all {
-            ContextCompat.checkSelfPermission(
-                context,
-                it
-            ) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         } && ShizukuUtils.isRunning(context)
     }
 }

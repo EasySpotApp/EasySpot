@@ -29,22 +29,24 @@ class MainActivity : ComponentActivity() {
     private lateinit var bluetoothManager: BluetoothManager
 
     private val requestPermissionsLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            permissions ->
             val allPermissionsGranted = permissions.entries.all { it.value }
             if (allPermissionsGranted) {
                 if (!ShizukuUtils.isPermissionGranted()) {
                     if (Shizuku.shouldShowRequestPermissionRationale()) {
                         Toast.makeText(
-                            this,
-                            "The app requires all permissions to function correctly.",
-                            Toast.LENGTH_LONG
-                        ).show()
+                                this,
+                                "The app requires all permissions to function correctly.",
+                                Toast.LENGTH_LONG,
+                            )
+                            .show()
 
                         Log.w(this.toString(), "Shizuku not granted")
                         val intent =
                             Intent(
                                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.fromParts("package", packageName, null)
+                                Uri.fromParts("package", packageName, null),
                             )
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
@@ -57,17 +59,18 @@ class MainActivity : ComponentActivity() {
                 }
             } else {
                 Toast.makeText(
-                    this,
-                    "The app requires all permissions to function correctly.",
-                    Toast.LENGTH_LONG
-                ).show()
+                        this,
+                        "The app requires all permissions to function correctly.",
+                        Toast.LENGTH_LONG,
+                    )
+                    .show()
 
                 Log.w(this.toString(), "Not all permissions granted: $permissions")
 
                 val intent =
                     Intent(
                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", packageName, null)
+                        Uri.fromParts("package", packageName, null),
                     )
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
@@ -79,10 +82,11 @@ class MainActivity : ComponentActivity() {
         when (ShizukuUtils.getShizukuState(this)) {
             ShizukuState.NOT_INSTALLED -> {
                 Toast.makeText(
-                    this,
-                    "Shizuku is not installed. Please install it from the Play Store.",
-                    Toast.LENGTH_LONG
-                ).show()
+                        this,
+                        "Shizuku is not installed. Please install it from the Play Store.",
+                        Toast.LENGTH_LONG,
+                    )
+                    .show()
                 ShizukuUtils.openPlayStoreListing(this)
                 finish()
                 return
@@ -90,10 +94,11 @@ class MainActivity : ComponentActivity() {
 
             ShizukuState.NOT_RUNNING -> {
                 Toast.makeText(
-                    this,
-                    "Shizuku is not running. Please start the Shizuku service.",
-                    Toast.LENGTH_LONG
-                ).show()
+                        this,
+                        "Shizuku is not running. Please start the Shizuku service.",
+                        Toast.LENGTH_LONG,
+                    )
+                    .show()
                 ShizukuUtils.startShizukuActivity(this)
                 finish()
                 return
@@ -102,9 +107,10 @@ class MainActivity : ComponentActivity() {
             else -> {}
         }
 
-        val permissionsNotGranted = permissionsToRequest.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
-        }
+        val permissionsNotGranted =
+            permissionsToRequest.filter {
+                ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+            }
 
         Log.w(this.toString(), "Permissions not granted: $permissionsNotGranted")
 
@@ -114,16 +120,17 @@ class MainActivity : ComponentActivity() {
             if (!ShizukuUtils.isPermissionGranted()) {
                 if (Shizuku.shouldShowRequestPermissionRationale()) {
                     Toast.makeText(
-                        this,
-                        "The app requires all permissions to function correctly.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                            this,
+                            "The app requires all permissions to function correctly.",
+                            Toast.LENGTH_LONG,
+                        )
+                        .show()
 
                     Log.w(this.toString(), "Shizuku not granted")
                     val intent =
                         Intent(
                             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.fromParts("package", packageName, null)
+                            Uri.fromParts("package", packageName, null),
                         )
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
@@ -139,24 +146,25 @@ class MainActivity : ComponentActivity() {
 
     private val shizukuPermissionListener =
         Shizuku.OnRequestPermissionResultListener { requestCode: Int, grantResult: Int ->
-            if (grantResult == PackageManager.PERMISSION_GRANTED && PermissionUtils.arePermissionsGranted(
-                    this
-                )
+            if (
+                grantResult == PackageManager.PERMISSION_GRANTED &&
+                    PermissionUtils.arePermissionsGranted(this)
             ) {
                 onAllPermissionsGranted()
             } else {
                 Toast.makeText(
-                    this,
-                    "The app requires all permissions to function correctly.",
-                    Toast.LENGTH_LONG
-                ).show()
+                        this,
+                        "The app requires all permissions to function correctly.",
+                        Toast.LENGTH_LONG,
+                    )
+                    .show()
 
                 Log.w(this.toString(), "Shizuku permission not granted")
 
                 val intent =
                     Intent(
                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", packageName, null)
+                        Uri.fromParts("package", packageName, null),
                     )
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
@@ -167,18 +175,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            EasySpotTheme {
-                MainScaffold(this)
-            }
-        }
+        setContent { EasySpotTheme { MainScaffold(this) } }
 
         bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         checkBluetoothSupport()
 
         Shizuku.addRequestPermissionResultListener(shizukuPermissionListener)
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -202,18 +205,18 @@ class MainActivity : ComponentActivity() {
         }
 
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, "Device doesn't support Bluetooth LE.", Toast.LENGTH_LONG)
-                .show()
+            Toast.makeText(this, "Device doesn't support Bluetooth LE.", Toast.LENGTH_LONG).show()
             Log.e(this.toString(), "Bluetooth LE not supported")
             finish()
         }
 
         if (bluetoothAdapter.isEnabled && !bluetoothAdapter.isMultipleAdvertisementSupported()) {
             Toast.makeText(
-                this,
-                "Device doesn't support Bluetooth LE Advertising.",
-                Toast.LENGTH_LONG
-            ).show()
+                    this,
+                    "Device doesn't support Bluetooth LE Advertising.",
+                    Toast.LENGTH_LONG,
+                )
+                .show()
             Log.e(this.toString(), "Bluetooth LE Advertising not supported")
             finish()
         }

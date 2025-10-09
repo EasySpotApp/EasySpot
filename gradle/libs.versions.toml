@@ -7,6 +7,7 @@ activityCompose = "1.11.0"
 composeBom = "2025.09.01"
 shizuku = "13.1.5"
 hiddenapibypass = "6.1"
+ktfmtGradle = "0.24.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -26,3 +27,4 @@ hiddenapibypass = { group = "org.lsposed.hiddenapibypass", name = "hiddenapibypa
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ktfmt-gradle = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmtGradle" }

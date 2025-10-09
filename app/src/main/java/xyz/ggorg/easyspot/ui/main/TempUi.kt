@@ -19,32 +19,30 @@ import xyz.ggorg.easyspot.service.BleService
 fun TempUi(mainActivity: MainActivity) {
     val context = LocalContext.current
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(4.dp),
-        Arrangement.Top,
-        Alignment.CenterHorizontally
-    ) {
-        Button(onClick = {
-            mainActivity.checkAndRequestPermissions()
-        }) { Text("Start") }
+    Column(Modifier.fillMaxSize().padding(4.dp), Arrangement.Top, Alignment.CenterHorizontally) {
+        Button(onClick = { mainActivity.checkAndRequestPermissions() }) { Text("Start") }
 
-        Button(onClick = {
-            if (PermissionUtils.arePermissionsGranted(context)) {
-                val intent = Intent(context, BleService::class.java)
-                context.stopService(intent)
+        Button(
+            onClick = {
+                if (PermissionUtils.arePermissionsGranted(context)) {
+                    val intent = Intent(context, BleService::class.java)
+                    context.stopService(intent)
+                }
             }
-        }) { Text("Stop") }
+        ) {
+            Text("Stop")
+        }
 
-        Text("The service state is visible in your notification panel. See the GitHub repo for a client application.")
+        Text(
+            "The service state is visible in your notification panel. See the GitHub repo for a client application."
+        )
     }
 }
 
-//@Preview
-//@Composable
-//private fun TempUiPreview() {
+// @Preview
+// @Composable
+// private fun TempUiPreview() {
 //    EasySpotPreview {
 //        TempUi()
 //    }
-//}
+// }

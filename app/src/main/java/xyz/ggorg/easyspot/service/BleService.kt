@@ -31,9 +31,11 @@ class BleService : Service() {
             val bluetoothManager = context.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
             val bluetoothAdapter = bluetoothManager.adapter
 
-            if (bluetoothAdapter == null ||
-                !context.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) ||
-                (bluetoothAdapter.isEnabled && !bluetoothAdapter.isMultipleAdvertisementSupported)
+            if (
+                bluetoothAdapter == null ||
+                    !context.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) ||
+                    (bluetoothAdapter.isEnabled &&
+                        !bluetoothAdapter.isMultipleAdvertisementSupported)
             ) {
                 Log.w(this.toString(), "Bluetooth LE Advertising not supported")
                 return
@@ -62,11 +64,12 @@ class BleService : Service() {
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        val serviceChannel = NotificationChannel(
-            SERVICE_CHANNEL_ID,
-            "Hotspot Service Channel",
-            NotificationManager.IMPORTANCE_LOW
-        )
+        val serviceChannel =
+            NotificationChannel(
+                SERVICE_CHANNEL_ID,
+                "Hotspot Service Channel",
+                NotificationManager.IMPORTANCE_LOW,
+            )
         notificationManager.createNotificationChannel(serviceChannel)
 
         bluetoothStateReceiver = BluetoothStateReceiver(this)
@@ -103,26 +106,29 @@ class BleService : Service() {
             return
         }
 
-        if (bluetoothAdapter == null ||
-            !packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) ||
-            (bluetoothAdapter!!.isEnabled && !bluetoothAdapter!!.isMultipleAdvertisementSupported)
+        if (
+            bluetoothAdapter == null ||
+                !packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) ||
+                (bluetoothAdapter!!.isEnabled &&
+                    !bluetoothAdapter!!.isMultipleAdvertisementSupported)
         ) {
             Log.e(this.toString(), "Bluetooth LE Advertising not supported")
             stopSelf()
             return
         }
 
-        val notification = Notification.Builder(this, SERVICE_CHANNEL_ID)
-            .setContentTitle("EasySpot")
-            .setContentText("Service is running")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .build()
+        val notification =
+            Notification.Builder(this, SERVICE_CHANNEL_ID)
+                .setContentTitle("EasySpot")
+                .setContentText("Service is running")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .build()
 
         ServiceCompat.startForeground(
             this,
             System.currentTimeMillis().toInt(),
             notification,
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE,
         )
 
         bluetoothStateReceiver.register(this)
