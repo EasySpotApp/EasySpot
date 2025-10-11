@@ -10,12 +10,17 @@ import androidx.core.content.ContextCompat
 
 class ServiceStarter : BroadcastReceiver() {
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun onReceive(
+        context: Context,
+        intent: Intent,
+    ) {
         Log.d(this.toString(), "Received intent: ${intent.action} - starting service")
 
-        if (
-            ServiceState.BluetoothState.PERMISSIONS.none {
-                ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        if (ServiceState.BluetoothState.PERMISSIONS.none {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    it,
+                ) == PackageManager.PERMISSION_GRANTED
             }
         ) {
             Log.w(this.toString(), "Missing Bluetooth permissions - not starting service")

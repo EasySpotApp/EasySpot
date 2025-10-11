@@ -3,4 +3,20 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.ktlint)
+}
+
+subprojects {
+    apply(
+        plugin =
+            rootProject.libs.plugins.ktlint
+                .get()
+                .pluginId,
+    )
+
+    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        version = "1.7.1"
+        android.set(true)
+        enableExperimentalRules.set(true)
+    }
 }

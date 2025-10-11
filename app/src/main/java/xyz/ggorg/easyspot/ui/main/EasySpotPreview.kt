@@ -7,6 +7,13 @@ import androidx.compose.ui.Modifier
 import xyz.ggorg.easyspot.ui.theme.EasySpotTheme
 
 @Composable
-fun EasySpotPreview(content: @Composable () -> Unit) {
-    EasySpotTheme { Box(Modifier.fillMaxSize()) { content() } }
+fun EasySpotPreview(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    EasySpotTheme {
+        Box(modifier.fillMaxSize()) {
+            content()
+        }
+    }
 }

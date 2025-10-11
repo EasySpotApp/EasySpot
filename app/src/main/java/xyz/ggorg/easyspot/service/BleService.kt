@@ -27,7 +27,7 @@ class BleService : Service() {
 
     private var bluetoothManager: BluetoothManager? = null
 
-    private val _serviceState = MutableStateFlow(ServiceState())
+    private val serviceState = MutableStateFlow(ServiceState())
     private var isRunning: Boolean = false
 
     private lateinit var bluetoothStateReceiver: BluetoothStateReceiver
@@ -42,13 +42,14 @@ class BleService : Service() {
 
         bluetoothManager = ContextCompat.getSystemService(this, BluetoothManager::class.java)
 
-        ContextCompat.getSystemService(this, NotificationManager::class.java)
+        ContextCompat
+            .getSystemService(this, NotificationManager::class.java)
             ?.createNotificationChannel(
                 NotificationChannel(
                     SERVICE_CHANNEL_ID,
                     "Hotspot Service Channel",
                     NotificationManager.IMPORTANCE_LOW,
-                )
+                ),
             )
 
         bluetoothStateReceiver = BluetoothStateReceiver(this)
@@ -57,7 +58,11 @@ class BleService : Service() {
         shizukuStateReceiver = ShizukuStateReceiver(this)
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int {
         Log.d(this.toString(), "Start command received")
 
         shizukuStateReceiver.register()
@@ -73,7 +78,8 @@ class BleService : Service() {
         Log.d(this.toString(), "Starting foreground service")
 
         val notification =
-            Notification.Builder(this, SERVICE_CHANNEL_ID)
+            Notification
+                .Builder(this, SERVICE_CHANNEL_ID)
                 .setContentTitle("EasySpot")
                 .setContentText("Service is running")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -94,7 +100,7 @@ class BleService : Service() {
     override fun onBind(intent: Intent): IBinder? = BleServiceBinder()
 
     fun updateState() {
-        _serviceState.update {
+        serviceState.update {
             val state = ServiceState.getState(this)
 
             if (state.bluetooth > ServiceState.BluetoothState.NoPermission) {
@@ -152,7 +158,7 @@ class BleService : Service() {
     }
 
     inner class BleServiceBinder : Binder() {
-        val serviceState = _serviceState.asStateFlow()
+        val serviceState = this@BleService.serviceState.asStateFlow()
 
         fun updateState() = this@BleService.updateState()
     }

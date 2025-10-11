@@ -3,8 +3,9 @@ package xyz.ggorg.easyspot.service
 import android.util.Log
 import rikka.shizuku.Shizuku
 
-class ShizukuStateReceiver(private val bleService: BleService) :
-    Shizuku.OnBinderReceivedListener,
+class ShizukuStateReceiver(
+    private val bleService: BleService,
+) : Shizuku.OnBinderReceivedListener,
     Shizuku.OnBinderDeadListener,
     Shizuku.OnRequestPermissionResultListener {
     private var isRegistered: Boolean = false
@@ -29,7 +30,10 @@ class ShizukuStateReceiver(private val bleService: BleService) :
         bleService.updateState()
     }
 
-    override fun onRequestPermissionResult(requestCode: Int, grantResult: Int) {
+    override fun onRequestPermissionResult(
+        requestCode: Int,
+        grantResult: Int,
+    ) {
         bleService.updateState()
     }
 

@@ -20,7 +20,8 @@ data class ServiceState(
         NoAdvertising,
         NoPermission,
         Off,
-        On;
+        On,
+        ;
 
         companion object {
             val PERMISSIONS =
@@ -31,25 +32,42 @@ data class ServiceState(
 
             fun getState(context: Context): BluetoothState {
                 val bluetoothAdapter =
-                    ContextCompat.getSystemService(context, BluetoothManager::class.java)?.adapter
+                    ContextCompat
+                        .getSystemService(context, BluetoothManager::class.java)
+                        ?.adapter
 
                 return when {
-                    bluetoothAdapter == null -> NoAdapter
+                    bluetoothAdapter == null -> {
+                        NoAdapter
+                    }
 
-                    !context.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) ->
+                    !context.packageManager.hasSystemFeature(
+                        PackageManager.FEATURE_BLUETOOTH_LE,
+                    ) -> {
                         NoBle
+                    }
 
                     bluetoothAdapter.isEnabled &&
-                        !bluetoothAdapter.isMultipleAdvertisementSupported -> NoAdvertising
+                        !bluetoothAdapter.isMultipleAdvertisementSupported -> {
+                        NoAdvertising
+                    }
 
                     PERMISSIONS.any {
-                        ContextCompat.checkSelfPermission(context, it) ==
-                            PackageManager.PERMISSION_DENIED
-                    } -> NoPermission
+                        ContextCompat.checkSelfPermission(
+                            context,
+                            it,
+                        ) == PackageManager.PERMISSION_DENIED
+                    } -> {
+                        NoPermission
+                    }
 
-                    bluetoothAdapter.isEnabled -> On
+                    bluetoothAdapter.isEnabled -> {
+                        On
+                    }
 
-                    else -> Off
+                    else -> {
+                        Off
+                    }
                 }
             }
         }
@@ -59,27 +77,34 @@ data class ServiceState(
         NotInstalled,
         NotRunning,
         NoPermission,
-        Running;
+        Running,
+        ;
 
         companion object {
             fun isInstalled(context: Context): Boolean =
                 runCatching {
-                        context.packageManager
-                            .getApplicationInfo(ShizukuUtils.PACKAGE_NAME, 0)
-                            .enabled
-                    }
-                    .getOrElse { false }
+                    context.packageManager
+                        .getApplicationInfo(ShizukuUtils.PACKAGE_NAME, 0)
+                        .enabled
+                }.getOrElse { false }
 
             fun getState(context: Context): ShizukuState =
                 when {
-                    !isInstalled(context) -> NotInstalled
+                    !isInstalled(context) -> {
+                        NotInstalled
+                    }
 
-                    !Shizuku.pingBinder() -> NotRunning
+                    !Shizuku.pingBinder() -> {
+                        NotRunning
+                    }
 
-                    Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED ->
+                    Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED -> {
                         NoPermission
+                    }
 
-                    else -> Running
+                    else -> {
+                        Running
+                    }
                 }
         }
     }

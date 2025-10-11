@@ -21,7 +21,9 @@ import androidx.core.content.ContextCompat
 import xyz.ggorg.easyspot.R
 import xyz.ggorg.easyspot.shizuku.ShizukuTetherHelper
 
-class GattServer(private val context: Context) {
+class GattServer(
+    private val context: Context,
+) {
     companion object {
         const val EVENT_CHANNEL_ID = "HotspotEventChannel"
     }
@@ -32,13 +34,14 @@ class GattServer(private val context: Context) {
         ContextCompat.getSystemService(context, BluetoothManager::class.java)
 
     init {
-        ContextCompat.getSystemService(context, NotificationManager::class.java)
+        ContextCompat
+            .getSystemService(context, NotificationManager::class.java)
             ?.createNotificationChannel(
                 NotificationChannel(
                     EVENT_CHANNEL_ID,
                     "Hotspot Event Channel",
                     NotificationManager.IMPORTANCE_HIGH,
-                )
+                ),
             )
     }
 
@@ -102,25 +105,25 @@ class GattServer(private val context: Context) {
                         with(NotificationManagerCompat.from(context)) {
                             notify(
                                 System.currentTimeMillis().toInt(),
-                                NotificationCompat.Builder(context, EVENT_CHANNEL_ID)
+                                NotificationCompat
+                                    .Builder(context, EVENT_CHANNEL_ID)
                                     .apply {
                                         setSmallIcon(R.drawable.ic_launcher_foreground)
                                         setContentTitle("EasySpot")
                                         setContentText(
                                             "Hotspot got ${
-                                            if (newHotspotState) {
-                                                "enabled"
-                                            } else {
-                                                "disabled"
-                                            }
-                                        } by ${
-                                            device?.name ?: device?.address
-                                        }!"
+                                                if (newHotspotState) {
+                                                    "enabled"
+                                                } else {
+                                                    "disabled"
+                                                }
+                                            } by ${
+                                                device?.name ?: device?.address
+                                            }!",
                                         )
                                         setPriority(NotificationCompat.PRIORITY_HIGH)
                                         setAutoCancel(true)
-                                    }
-                                    .build(),
+                                    }.build(),
                             )
                         }
                     }

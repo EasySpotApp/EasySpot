@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.runtime.CompositionLocalProvider
 import xyz.ggorg.easyspot.service.BleService
 import xyz.ggorg.easyspot.ui.theme.EasySpotTheme
 
@@ -19,7 +18,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EasySpotTheme {
-                CompositionLocalProvider(LocalMainViewModel provides mainVm) { MainScaffold() }
+                MainScaffold(mainVm)
             }
         }
     }

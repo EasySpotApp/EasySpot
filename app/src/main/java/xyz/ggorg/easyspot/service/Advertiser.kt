@@ -12,9 +12,12 @@ import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 
-class Advertiser(context: Context) {
+class Advertiser(
+    context: Context,
+) {
     private val bluetoothLeAdvertiser: BluetoothLeAdvertiser? =
-        ContextCompat.getSystemService(context, BluetoothManager::class.java)
+        ContextCompat
+            .getSystemService(context, BluetoothManager::class.java)
             ?.adapter
             ?.bluetoothLeAdvertiser
 
@@ -36,23 +39,23 @@ class Advertiser(context: Context) {
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
     fun start() {
         val settings =
-            AdvertiseSettings.Builder()
+            AdvertiseSettings
+                .Builder()
                 .apply {
                     setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
                     setConnectable(true)
                     setTimeout(0)
                     setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_LOW)
-                }
-                .build()
+                }.build()
 
         val data =
-            AdvertiseData.Builder()
+            AdvertiseData
+                .Builder()
                 .apply {
                     setIncludeDeviceName(false)
                     setIncludeTxPowerLevel(true)
                     addServiceUuid(ParcelUuid(HotspotProfile.SERVICE_UUID))
-                }
-                .build()
+                }.build()
 
         bluetoothLeAdvertiser?.startAdvertising(settings, data, advertiseCallback)
     }

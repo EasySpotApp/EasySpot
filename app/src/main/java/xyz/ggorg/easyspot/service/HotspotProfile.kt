@@ -9,15 +9,14 @@ object HotspotProfile {
 
     val CHARACTERISTIC_UUID: UUID = UUID.fromString("47436878-5308-40f9-9c29-82c2cb87f595")
 
-    fun createHotspotService(): BluetoothGattService {
-        return BluetoothGattService(SERVICE_UUID, BluetoothGattService.SERVICE_TYPE_PRIMARY).apply {
+    fun createHotspotService(): BluetoothGattService =
+        BluetoothGattService(SERVICE_UUID, BluetoothGattService.SERVICE_TYPE_PRIMARY).apply {
             addCharacteristic(
                 BluetoothGattCharacteristic(
                     CHARACTERISTIC_UUID,
                     BluetoothGattCharacteristic.PROPERTY_WRITE,
                     BluetoothGattCharacteristic.PERMISSION_WRITE,
-                )
+                ),
             )
         }
-    }
 }

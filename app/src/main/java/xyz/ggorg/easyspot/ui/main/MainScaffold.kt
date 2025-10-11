@@ -1,6 +1,5 @@
 package xyz.ggorg.easyspot.ui.main
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,7 +15,10 @@ import xyz.ggorg.easyspot.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScaffold() {
+fun MainScaffold(
+    mainVm: MainViewModel,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -25,11 +27,16 @@ fun MainScaffold() {
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                title = { Text(stringResource(R.string.app_name)) },
+                title = {
+                    Text(stringResource(R.string.app_name))
+                },
             )
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     ) { innerPadding ->
-        Box(Modifier.padding(innerPadding)) { TempUi() }
+        TempUi(
+            @Suppress("ktlint:compose:vm-forwarding-check") mainVm,
+            modifier = Modifier.padding(innerPadding),
+        )
     }
 }

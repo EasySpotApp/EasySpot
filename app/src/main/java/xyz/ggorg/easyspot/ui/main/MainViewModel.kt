@@ -4,7 +4,6 @@ import android.content.ComponentName
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -16,7 +15,9 @@ import kotlinx.coroutines.launch
 import xyz.ggorg.easyspot.service.BleService
 import xyz.ggorg.easyspot.service.ServiceState
 
-class MainViewModel : ViewModel(), ServiceConnection {
+class MainViewModel :
+    ViewModel(),
+    ServiceConnection {
     var binder: BleService.BleServiceBinder? = null
         private set
 
@@ -28,21 +29,26 @@ class MainViewModel : ViewModel(), ServiceConnection {
     private val _serviceState = MutableStateFlow(ServiceState())
     val serviceState = _serviceState.asStateFlow()
 
-    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+    override fun onServiceConnected(
+        name: ComponentName?,
+        service: IBinder?,
+    ) {
         Log.d(this.toString(), "Service $name connected")
         binder = service as? BleService.BleServiceBinder ?: return
+
         serviceJob =
-            viewModelScope.launch { _serviceState.emitAll(binder?.serviceState ?: return@launch) }
+            viewModelScope.launch {
+                _serviceState.emitAll(binder?.serviceState ?: return@launch)
+            }
+
         _serviceConnectionState.update { true }
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
         Log.d(this.toString(), "Service $name disconnected")
+
         _serviceConnectionState.update { false }
         serviceJob?.cancel()
         binder = null
     }
 }
-
-val LocalMainViewModel =
-    staticCompositionLocalOf<MainViewModel> { error("MainViewModel not provided") }

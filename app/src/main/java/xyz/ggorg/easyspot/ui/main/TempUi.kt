@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -20,32 +19,48 @@ import rikka.shizuku.Shizuku
 import xyz.ggorg.easyspot.PermissionUtils
 
 @Composable
-fun TempUi() {
-    val mainVm = LocalMainViewModel.current
-
+fun TempUi(
+    mainVm: MainViewModel,
+    modifier: Modifier = Modifier,
+) {
     val serviceConnectionState by mainVm.serviceConnectionState.collectAsStateWithLifecycle()
     val serviceState by mainVm.serviceState.collectAsStateWithLifecycle()
 
     val permissionLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions(),
+        ) {
             mainVm.binder?.updateState()
         }
     val bluetoothLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+        ) {}
 
-    Column(Modifier.fillMaxSize().padding(4.dp), Arrangement.Top, Alignment.CenterHorizontally) {
+    Column(
+        modifier
+            .padding(4.dp),
+        Arrangement.Top,
+        Alignment.CenterHorizontally,
+    ) {
         Text("Connection: $serviceConnectionState, service: $serviceState")
 
-        Button(onClick = { permissionLauncher.launch(PermissionUtils.permissionsToRequest) }) {
+        Button(onClick = {
+            permissionLauncher.launch(PermissionUtils.permissionsToRequest)
+        }) {
             Text("request permissions")
         }
 
-        Button(onClick = { Shizuku.requestPermission(System.currentTimeMillis().toInt()) }) {
+        Button(onClick = {
+            Shizuku.requestPermission(System.currentTimeMillis().toInt())
+        }) {
             Text("request shizuku")
         }
 
         Button(
-            onClick = { bluetoothLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)) }
+            onClick = {
+                bluetoothLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+            },
         ) {
             Text("enable bluetooth")
         }

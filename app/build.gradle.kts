@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ktfmt.gradle)
 }
 
 android {
@@ -50,6 +49,5 @@ dependencies {
     implementation(libs.shizukuApi)
     implementation(libs.shizukuProvider)
     implementation(libs.hiddenapibypass)
+    ktlintRuleset(libs.ktlint.compose)
 }
-
-ktfmt { kotlinLangStyle() }

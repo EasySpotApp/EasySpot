@@ -304,4 +304,4 @@ obj/
 
 app/debug/
 app/release/
-!.idea/ktfmt.xml
+!.idea/ktlint-plugin.xml

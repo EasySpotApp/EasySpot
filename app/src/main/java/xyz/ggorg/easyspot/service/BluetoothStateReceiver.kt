@@ -9,7 +9,9 @@ import android.content.IntentFilter
 import android.util.Log
 import androidx.annotation.RequiresPermission
 
-class BluetoothStateReceiver(private val bleService: BleService) : BroadcastReceiver() {
+class BluetoothStateReceiver(
+    private val bleService: BleService,
+) : BroadcastReceiver() {
     private var isRegistered: Boolean = false
 
     fun register() {
@@ -24,7 +26,10 @@ class BluetoothStateReceiver(private val bleService: BleService) : BroadcastRece
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun onReceive(
+        context: Context,
+        intent: Intent,
+    ) {
         bleService.updateState()
     }
 

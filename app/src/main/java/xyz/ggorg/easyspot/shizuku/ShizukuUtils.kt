@@ -19,7 +19,7 @@ object ShizukuUtils {
             context.startActivity(
                 Intent(Intent.ACTION_VIEW)
                     .addCategory(Intent.CATEGORY_BROWSABLE)
-                    .setData(PLAY_STORE_APP_URI)
+                    .setData(PLAY_STORE_APP_URI),
             )
         } catch (_: ActivityNotFoundException) {
             val intent =
@@ -39,7 +39,7 @@ object ShizukuUtils {
                 Intent(Intent.ACTION_MAIN).apply {
                     component = ComponentName(PACKAGE_NAME, "moe.shizuku.manager.MainActivity")
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
+                },
             )
         } catch (_: Exception) {
             openPlayStoreListing(context)
