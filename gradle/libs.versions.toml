@@ -8,6 +8,7 @@ composeBom = "2025.09.01"
 shizuku = "13.1.5"
 hiddenapibypass = "6.1"
 ktfmtGradle = "0.24.0"
+lifecycleViewmodelCompose = "2.9.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -22,6 +23,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 shizukuApi = { group = "dev.rikka.shizuku", name = "api", version.ref = "shizuku" }
 shizukuProvider = { group = "dev.rikka.shizuku", name = "provider", version.ref = "shizuku" }
 hiddenapibypass = { group = "org.lsposed.hiddenapibypass", name = "hiddenapibypass", version.ref = "hiddenapibypass" }
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -16,7 +16,7 @@ import xyz.ggorg.easyspot.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScaffold(mainActivity: MainActivity) {
+fun MainScaffold() {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -30,14 +30,6 @@ fun MainScaffold(mainActivity: MainActivity) {
         },
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
-        Box(Modifier.padding(innerPadding)) { TempUi(mainActivity) }
+        Box(Modifier.padding(innerPadding)) { TempUi() }
     }
 }
-
-// @Preview(showSystemUi = true)
-// @Composable
-// private fun Preview() {
-//    EasySpotPreview {
-//        MainScaffold()
-//    }
-// }

@@ -10,24 +10,25 @@ import android.content.Context
 import android.os.ParcelUuid
 import android.util.Log
 import androidx.annotation.RequiresPermission
-import xyz.ggorg.easyspot.HotspotProfile
+import androidx.core.content.ContextCompat
 
 class Advertiser(context: Context) {
-    private val bluetoothManager: BluetoothManager =
-        context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-
     private val bluetoothLeAdvertiser: BluetoothLeAdvertiser? =
-        bluetoothManager.adapter.bluetoothLeAdvertiser
+        ContextCompat.getSystemService(context, BluetoothManager::class.java)
+            ?.adapter
+            ?.bluetoothLeAdvertiser
 
     private val advertiseCallback =
         object : AdvertiseCallback() {
             override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
                 super.onStartSuccess(settingsInEffect)
+
                 Log.d(this.toString(), "Advertising started successfully")
             }
 
             override fun onStartFailure(errorCode: Int) {
                 super.onStartFailure(errorCode)
+
                 Log.e(this.toString(), "Advertising failed with error code: $errorCode")
             }
         }

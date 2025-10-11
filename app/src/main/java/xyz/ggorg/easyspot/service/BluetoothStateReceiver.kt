@@ -8,44 +8,33 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
 import androidx.annotation.RequiresPermission
-import xyz.ggorg.easyspot.PermissionUtils
 
 class BluetoothStateReceiver(private val bleService: BleService) : BroadcastReceiver() {
-    fun register(context: Context) {
+    private var isRegistered: Boolean = false
+
+    fun register() {
+        if (isRegistered) return
+
+        isRegistered = true
+
         val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
-        context.registerReceiver(this, filter)
+        bleService.registerReceiver(this, filter)
 
-        Log.d(context.toString(), "Bluetooth state receiver registered")
-    }
-
-    fun unregister(context: Context) {
-        context.unregisterReceiver(this)
-
-        Log.d(context.toString(), "Bluetooth state receiver unregistered")
+        Log.d(this.toString(), "Bluetooth state receiver registered")
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
     override fun onReceive(context: Context, intent: Intent) {
-        if (!PermissionUtils.arePermissionsGranted(context)) {
-            return
-        }
+        bleService.updateState()
+    }
 
-        val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
-        when (state) {
-            BluetoothAdapter.STATE_OFF -> {
-                Log.d(context.toString(), "Bluetooth is off")
-                bleService.stop()
-            }
+    fun unregister() {
+        if (!isRegistered) return
 
-            BluetoothAdapter.STATE_TURNING_OFF -> {
-                Log.d(context.toString(), "Bluetooth is turning off")
-                bleService.stop()
-            }
+        bleService.unregisterReceiver(this)
 
-            BluetoothAdapter.STATE_ON -> {
-                Log.d(context.toString(), "Bluetooth is on")
-                bleService.start()
-            }
-        }
+        isRegistered = false
+
+        Log.d(this.toString(), "Bluetooth state receiver unregistered")
     }
 }

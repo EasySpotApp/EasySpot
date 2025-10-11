@@ -17,7 +17,7 @@ import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import xyz.ggorg.easyspot.HotspotProfile
+import androidx.core.content.ContextCompat
 import xyz.ggorg.easyspot.R
 import xyz.ggorg.easyspot.shizuku.ShizukuTetherHelper
 
@@ -28,20 +28,18 @@ class GattServer(private val context: Context) {
 
     private var gattServer: BluetoothGattServer? = null
 
-    private val bluetoothManager: BluetoothManager =
-        context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+    private val bluetoothManager: BluetoothManager? =
+        ContextCompat.getSystemService(context, BluetoothManager::class.java)
 
     init {
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        val eventChannel =
-            NotificationChannel(
-                EVENT_CHANNEL_ID,
-                "Hotspot Event Channel",
-                NotificationManager.IMPORTANCE_HIGH,
+        ContextCompat.getSystemService(context, NotificationManager::class.java)
+            ?.createNotificationChannel(
+                NotificationChannel(
+                    EVENT_CHANNEL_ID,
+                    "Hotspot Event Channel",
+                    NotificationManager.IMPORTANCE_HIGH,
+                )
             )
-        notificationManager.createNotificationChannel(eventChannel)
     }
 
     private val callback =
@@ -144,7 +142,7 @@ class GattServer(private val context: Context) {
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun start() {
-        gattServer = bluetoothManager.openGattServer(context, callback)
+        gattServer = bluetoothManager?.openGattServer(context, callback)
         gattServer?.addService(HotspotProfile.createHotspotService())
 
         Log.d(this.toString(), "GATT Server started")
