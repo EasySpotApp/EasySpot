@@ -10,6 +10,7 @@ hiddenapibypass = "6.1"
 lifecycleViewmodelCompose = "2.9.4"
 ktlint = "13.1.0"
 ktlintCompose = "0.4.27"
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -26,6 +27,7 @@ shizukuProvider = { group = "dev.rikka.shizuku", name = "provider", version.ref 
 hiddenapibypass = { group = "org.lsposed.hiddenapibypass", name = "hiddenapibypass", version.ref = "hiddenapibypass" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 ktlint-compose = { group = "io.nlopez.compose.rules", name = "ktlint", version.ref = "ktlintCompose" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

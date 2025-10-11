@@ -8,9 +8,9 @@ import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
 import android.os.ParcelUuid
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
+import timber.log.Timber
 
 class Advertiser(
     context: Context,
@@ -26,13 +26,13 @@ class Advertiser(
             override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
                 super.onStartSuccess(settingsInEffect)
 
-                Log.d(this.toString(), "Advertising started successfully")
+                Timber.d("Advertising started successfully")
             }
 
             override fun onStartFailure(errorCode: Int) {
                 super.onStartFailure(errorCode)
 
-                Log.e(this.toString(), "Advertising failed with error code: $errorCode")
+                Timber.e("Advertising failed with error code: $errorCode")
             }
         }
 

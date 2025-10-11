@@ -5,17 +5,16 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import timber.log.Timber
 import xyz.ggorg.easyspot.R
 
 class BleService : Service() {
@@ -24,8 +23,6 @@ class BleService : Service() {
     }
 
     private var isForeground: Boolean = false
-
-    private var bluetoothManager: BluetoothManager? = null
 
     private val serviceState = MutableStateFlow(ServiceState())
     private var isRunning: Boolean = false
@@ -38,9 +35,7 @@ class BleService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        Log.d(this.toString(), "Creating service")
-
-        bluetoothManager = ContextCompat.getSystemService(this, BluetoothManager::class.java)
+        Timber.d("Creating service")
 
         ContextCompat
             .getSystemService(this, NotificationManager::class.java)
@@ -63,7 +58,7 @@ class BleService : Service() {
         flags: Int,
         startId: Int,
     ): Int {
-        Log.d(this.toString(), "Start command received")
+        Timber.d("Start command received")
 
         shizukuStateReceiver.register()
 
@@ -75,7 +70,7 @@ class BleService : Service() {
     private fun startForeground() {
         if (isForeground) return
 
-        Log.d(this.toString(), "Starting foreground service")
+        Timber.d("Starting foreground service")
 
         val notification =
             Notification
@@ -150,7 +145,7 @@ class BleService : Service() {
     override fun onDestroy() {
         super.onDestroy()
 
-        Log.d(this.toString(), "Destroying service")
+        Timber.d("Destroying service")
 
         shizukuStateReceiver.unregister()
         stop()

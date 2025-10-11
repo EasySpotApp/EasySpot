@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.net.IIntResultListener
 import android.net.ITetheringConnector
 import android.net.TetheringRequestParcel
-import android.util.Log
 import rikka.shizuku.ShizukuBinderWrapper
 import rikka.shizuku.SystemServiceHelper
+import timber.log.Timber
 
 @SuppressLint("DeprecatedSinceApi")
 object ShizukuTetherHelper {
@@ -31,10 +31,10 @@ object ShizukuTetherHelper {
         shouldShowEntitlementUi: Boolean = false,
         retryCount: Int = 0,
     ): Boolean {
-        Log.d(this.toString(), "entering setHotspotEnabledShizuku(enabled = $enabled)...")
+        Timber.d("entering setHotspotEnabledShizuku(enabled = $enabled)...")
 
         if (retryCount > 5) {
-            Log.e(this.toString(), "setHotspotEnabledShizuku: reached max retry count")
+            Timber.e("setHotspotEnabledShizuku: reached max retry count")
             return false
         }
 
@@ -51,10 +51,7 @@ object ShizukuTetherHelper {
                         override fun onResult(resultCode: Int) {
                             when (resultCode) {
                                 TETHER_ERROR_NO_ERROR -> {
-                                    Log.d(
-                                        this.toString(),
-                                        "setHotspotEnabledShizuku(true) - success",
-                                    )
+                                    Timber.d("setHotspotEnabledShizuku(true) - success")
                                 }
 
                                 TETHER_ERROR_NO_CHANGE_TETHERING_PERMISSION -> {
@@ -67,8 +64,7 @@ object ShizukuTetherHelper {
                                 }
 
                                 else -> {
-                                    Log.d(
-                                        this.toString(),
+                                    Timber.d(
                                         "setHotspotEnabledShizuku(true) - failed. code = $resultCode",
                                     )
                                 }
@@ -92,15 +88,11 @@ object ShizukuTetherHelper {
                         override fun onResult(resultCode: Int) {
                             when (resultCode) {
                                 TETHER_ERROR_NO_ERROR -> {
-                                    Log.d(
-                                        this.toString(),
-                                        "setHotspotEnabledShizuku(false) - success",
-                                    )
+                                    Timber.d("setHotspotEnabledShizuku(false) - success")
                                 }
 
                                 else -> {
-                                    Log.e(
-                                        this.toString(),
+                                    Timber.e(
                                         "setHotspotEnabledShizuku(false) - failed. code = $resultCode",
                                     )
                                 }
@@ -118,7 +110,7 @@ object ShizukuTetherHelper {
 
             true
         }.getOrElse {
-            Log.e(this.toString(), it.toString())
+            Timber.e(it.toString())
             false
         }
     }

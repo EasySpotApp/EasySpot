@@ -6,8 +6,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.util.Log
 import androidx.annotation.RequiresPermission
+import timber.log.Timber
 
 class BluetoothStateReceiver(
     private val bleService: BleService,
@@ -22,7 +22,7 @@ class BluetoothStateReceiver(
         val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
         bleService.registerReceiver(this, filter)
 
-        Log.d(this.toString(), "Bluetooth state receiver registered")
+        Timber.d("Bluetooth state receiver registered")
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
@@ -40,6 +40,6 @@ class BluetoothStateReceiver(
 
         isRegistered = false
 
-        Log.d(this.toString(), "Bluetooth state receiver unregistered")
+        Timber.d("Bluetooth state receiver unregistered")
     }
 }

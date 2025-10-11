@@ -1,7 +1,7 @@
 package xyz.ggorg.easyspot.service
 
-import android.util.Log
 import rikka.shizuku.Shizuku
+import timber.log.Timber
 
 class ShizukuStateReceiver(
     private val bleService: BleService,
@@ -19,7 +19,7 @@ class ShizukuStateReceiver(
         Shizuku.addBinderDeadListener(this)
         Shizuku.addRequestPermissionResultListener(this)
 
-        Log.d(this.toString(), "Shizuku state receiver registered")
+        Timber.d("Shizuku state receiver registered")
     }
 
     override fun onBinderDead() {
@@ -46,6 +46,6 @@ class ShizukuStateReceiver(
 
         isRegistered = false
 
-        Log.d(this.toString(), "Shizuku state receiver unregistered")
+        Timber.d("Shizuku state receiver unregistered")
     }
 }

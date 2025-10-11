@@ -5,8 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.core.content.ContextCompat
+import timber.log.Timber
 
 class ServiceStarter : BroadcastReceiver() {
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
@@ -14,7 +14,7 @@ class ServiceStarter : BroadcastReceiver() {
         context: Context,
         intent: Intent,
     ) {
-        Log.d(this.toString(), "Received intent: ${intent.action} - starting service")
+        Timber.d("Received intent: ${intent.action} - starting service")
 
         if (ServiceState.BluetoothState.PERMISSIONS.none {
                 ContextCompat.checkSelfPermission(
@@ -23,7 +23,7 @@ class ServiceStarter : BroadcastReceiver() {
                 ) == PackageManager.PERMISSION_GRANTED
             }
         ) {
-            Log.w(this.toString(), "Missing Bluetooth permissions - not starting service")
+            Timber.w("Missing Bluetooth permissions - not starting service")
             return
         }
 

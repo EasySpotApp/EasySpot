@@ -12,12 +12,12 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import timber.log.Timber
 import xyz.ggorg.easyspot.R
 import xyz.ggorg.easyspot.shizuku.ShizukuTetherHelper
 
@@ -54,9 +54,9 @@ class GattServer(
             ) {
                 super.onConnectionStateChange(device, status, newState)
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
-                    Log.d(this.toString(), "Device connected: ${device?.address}")
+                    Timber.d("Device connected: ${device?.address}")
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                    Log.d(this.toString(), "Device disconnected: ${device?.address}")
+                    Timber.d("Device disconnected: ${device?.address}")
                 }
             }
 
@@ -83,8 +83,7 @@ class GattServer(
                 val formattedValue =
                     value?.joinToString(separator = " ") { String.format("%02X", it) }
 
-                Log.d(
-                    this.toString(),
+                Timber.d(
                     "Characteristic ${characteristic?.uuid} write $formattedValue by ${device?.address} (${device?.name})",
                 )
 
@@ -148,7 +147,7 @@ class GattServer(
         gattServer = bluetoothManager?.openGattServer(context, callback)
         gattServer?.addService(HotspotProfile.createHotspotService())
 
-        Log.d(this.toString(), "GATT Server started")
+        Timber.d("GATT Server started")
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -158,6 +157,6 @@ class GattServer(
         gattServer?.close()
         gattServer = null
 
-        Log.d(this.toString(), "GATT Server stopped")
+        Timber.d("GATT Server stopped")
     }
 }

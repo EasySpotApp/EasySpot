@@ -3,7 +3,6 @@ package xyz.ggorg.easyspot.ui.main
 import android.content.ComponentName
 import android.content.ServiceConnection
 import android.os.IBinder
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -12,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import xyz.ggorg.easyspot.service.BleService
 import xyz.ggorg.easyspot.service.ServiceState
 
@@ -33,7 +33,7 @@ class MainViewModel :
         name: ComponentName?,
         service: IBinder?,
     ) {
-        Log.d(this.toString(), "Service $name connected")
+        Timber.d("Service $name connected")
         binder = service as? BleService.BleServiceBinder ?: return
 
         serviceJob =
@@ -45,7 +45,7 @@ class MainViewModel :
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
-        Log.d(this.toString(), "Service $name disconnected")
+        Timber.d("Service $name disconnected")
 
         _serviceConnectionState.update { false }
         serviceJob?.cancel()
