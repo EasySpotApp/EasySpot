@@ -25,7 +25,7 @@ class BleService : Service() {
     private var isForeground: Boolean = false
 
     private val serviceState = MutableStateFlow(ServiceState())
-    private var isRunning: Boolean = false
+    private var isRunning = MutableStateFlow(false)
 
     private lateinit var bluetoothStateReceiver: BluetoothStateReceiver
     private lateinit var bluetoothGattServer: GattServer
@@ -116,22 +116,22 @@ class BleService : Service() {
 
     @SuppressLint("MissingPermission")
     private fun start() {
-        if (isRunning || !isForeground) return
+        if (isRunning.value || !isForeground) return
 
         bluetoothGattServer.start()
         bluetoothLeAdvertiser.start()
 
-        isRunning = true
+        isRunning.update { true }
     }
 
     @SuppressLint("MissingPermission")
     private fun stop() {
-        if (!isRunning) return
+        if (!isRunning.value) return
 
         bluetoothLeAdvertiser.stop()
         bluetoothGattServer.stop()
 
-        isRunning = false
+        isRunning.update { false }
     }
 
     private fun stopForeground() {
@@ -154,6 +154,7 @@ class BleService : Service() {
 
     inner class BleServiceBinder : Binder() {
         val serviceState = this@BleService.serviceState.asStateFlow()
+        val isRunning = this@BleService.isRunning.asStateFlow()
 
         fun updateState() = this@BleService.updateState()
     }

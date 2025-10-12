@@ -29,6 +29,9 @@ class MainViewModel :
     private val _serviceState = MutableStateFlow(ServiceState())
     val serviceState = _serviceState.asStateFlow()
 
+    private val _isRunning = MutableStateFlow(false)
+    val isRunning = _isRunning.asStateFlow()
+
     override fun onServiceConnected(
         name: ComponentName?,
         service: IBinder?,
@@ -38,7 +41,8 @@ class MainViewModel :
 
         serviceJob =
             viewModelScope.launch {
-                _serviceState.emitAll(binder?.serviceState ?: return@launch)
+                launch { _serviceState.emitAll(binder?.serviceState ?: return@launch) }
+                launch { _isRunning.emitAll(binder?.isRunning ?: return@launch) }
             }
 
         _serviceConnectionState.update { true }

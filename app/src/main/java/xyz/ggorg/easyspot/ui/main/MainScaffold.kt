@@ -34,7 +34,7 @@ fun MainScaffold(
         },
         modifier = modifier.fillMaxSize(),
     ) { innerPadding ->
-        TempUi(
+        MainUi(
             @Suppress("ktlint:compose:vm-forwarding-check") mainVm,
             modifier = Modifier.padding(innerPadding),
         )
