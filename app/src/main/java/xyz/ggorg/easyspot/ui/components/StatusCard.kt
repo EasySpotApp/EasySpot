@@ -1,5 +1,8 @@
 package xyz.ggorg.easyspot.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,7 +54,7 @@ fun StatusCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = MaterialShapes.Cookie6Sided.toShape(),
+                    shape = MaterialShapes.Cookie9Sided.toShape(),
                     modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
@@ -77,11 +80,13 @@ fun StatusCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val color =
-                    if (ok) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.error
-                    }
+                    animateColorAsState(
+                        targetValue =
+                            MaterialTheme.colorScheme.let {
+                                if (ok) it.primary else it.error
+                            },
+                        animationSpec = tween(1000),
+                    )
 
                 Icon(
                     painterResource(
@@ -92,12 +97,12 @@ fun StatusCard(
                         },
                     ),
                     contentDescription = null,
-                    tint = color,
+                    tint = color.value,
                 )
 
-                Text(status, color = color)
+                Text(status, color = color.value)
 
-                if (fixable) {
+                AnimatedVisibility(fixable) {
                     Button(
                         onClick = onClick,
                         modifier = Modifier.padding(start = 8.dp),

@@ -14,7 +14,6 @@ import xyz.ggorg.easyspot.ui.theme.EasySpotTheme
 @Composable
 fun StatusList(
     serviceState: ServiceState,
-    isRunning: Boolean,
     modifier: Modifier = Modifier,
     onFixBluetooth: () -> Unit = {},
     onFixShizuku: () -> Unit = {},
@@ -54,16 +53,6 @@ fun StatusList(
                 onClick = onFixNotification,
             )
         }
-
-        isRunning.let {
-            StatusCard(
-                icon = painterResource(R.drawable.rounded_mobile_gear_24),
-                text = "Service",
-                ok = it,
-                status = if (it) "Running" else "Not running",
-                fixable = false,
-            )
-        }
     }
 }
 
@@ -77,7 +66,6 @@ private fun StatusListPreview() {
                 shizuku = ServiceState.ShizukuState.NotInstalled,
                 notificationPermission = false,
             ),
-            isRunning = false,
         )
     }
 }
