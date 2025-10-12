@@ -1,6 +1,6 @@
 # EasySpot
 
-An Android app that allows you to turn on your hotspot remotely via Bluetooth - think Apple
+An Android app that allows you to turn on (or off) your hotspot remotely via Bluetooth - think Apple
 Continuity, but for everyone!
 
 ## Requirements
@@ -22,15 +22,12 @@ Continuity, but for everyone!
 4. Follow the instructions in [the client's README](./pyclient/README.md) to set up the client
    program
 
-**Warning!** As long as the service is running, anyone nearby can toggle your hotspot - no pairing
-needed.
-
 ## TODO
 
 - Android 11 and lower support
-- User-friendly UI with onboarding
-- More robust, Rust-based client program
+- More robust, Rust-based client with a system tray icon and WiFi auto-connection
 - Android client
 - More hotspot control methods for improved reliability on different OS versions
-- Code cleanup
-- Security - only allow paired devices to control the hotspot
+- Settings menu (settings for the security level, advertising power, etc.)
+- About menu
+- Permission explanations
