@@ -145,7 +145,7 @@ class GattServer(
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun start() {
         gattServer = bluetoothManager?.openGattServer(context, callback)
-        gattServer?.addService(HotspotProfile.createHotspotService())
+        gattServer?.addService(HotspotProfile.hotspotService)
 
         Timber.d("GATT Server started")
     }
