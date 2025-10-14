@@ -15,7 +15,7 @@ object HotspotProfile {
                 BluetoothGattCharacteristic(
                     CHARACTERISTIC_UUID,
                     BluetoothGattCharacteristic.PROPERTY_WRITE,
-                    BluetoothGattCharacteristic.PERMISSION_WRITE_ENCRYPTED_MITM,
+                    BluetoothGattCharacteristic.PERMISSION_WRITE_ENCRYPTED,
                 ),
             )
         }
