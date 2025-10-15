@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.ggorg.easyspot.R
@@ -32,9 +33,9 @@ import xyz.ggorg.easyspot.ui.theme.EasySpotTheme
 @Composable
 fun StatusCard(
     icon: Painter,
-    text: String,
+    textResource: Int,
     ok: Boolean,
-    status: String,
+    statusResource: Int,
     modifier: Modifier = Modifier,
     iconPadding: Boolean = true,
     fixable: Boolean = !ok,
@@ -69,7 +70,7 @@ fun StatusCard(
                 }
 
                 Text(
-                    text = text,
+                    text = stringResource(textResource),
                     modifier = Modifier.padding(start = 8.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -100,7 +101,7 @@ fun StatusCard(
                     tint = color.value,
                 )
 
-                Text(status, color = color.value)
+                Text(stringResource(statusResource), color = color.value)
 
                 AnimatedVisibility(fixable) {
                     Button(
@@ -114,7 +115,7 @@ fun StatusCard(
                             modifier = Modifier.size(18.dp).padding(end = 4.dp),
                         )
 
-                        Text("Fix")
+                        Text(stringResource(R.string.home_statuscard_fix))
                     }
                 }
             }
@@ -128,9 +129,9 @@ private fun StatusCardPreview() {
     EasySpotTheme(darkTheme = true) {
         StatusCard(
             icon = painterResource(R.drawable.rounded_bluetooth_24),
-            text = "Bluetooth",
+            textResource = R.string.home_statuslist_bluetooth,
             ok = true,
-            status = "On",
+            statusResource = R.string.home_statuslist_bluetooth_on,
         )
     }
 }

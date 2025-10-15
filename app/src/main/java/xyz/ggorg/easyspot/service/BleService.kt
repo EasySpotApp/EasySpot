@@ -42,7 +42,7 @@ class BleService : Service() {
             ?.createNotificationChannel(
                 NotificationChannel(
                     SERVICE_CHANNEL_ID,
-                    "Hotspot Service Channel",
+                    getString(R.string.service_notification_channel),
                     NotificationManager.IMPORTANCE_LOW,
                 ),
             )
@@ -75,8 +75,8 @@ class BleService : Service() {
         val notification =
             Notification
                 .Builder(this, SERVICE_CHANNEL_ID)
-                .setContentTitle("EasySpot")
-                .setContentText("Service is running")
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.service_notification_running))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .build()
 

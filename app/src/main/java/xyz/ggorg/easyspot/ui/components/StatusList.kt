@@ -23,12 +23,37 @@ fun StatusList(
         serviceState.bluetooth.let {
             StatusCard(
                 icon = painterResource(R.drawable.rounded_bluetooth_24),
-                text = "Bluetooth",
+                textResource = R.string.home_statuslist_bluetooth,
                 ok = it == ServiceState.BluetoothState.On,
                 fixable =
                     it >= ServiceState.BluetoothState.NoPermission &&
                         it != ServiceState.BluetoothState.On,
-                status = it.name,
+                statusResource =
+                    when (it) {
+                        ServiceState.BluetoothState.NoAdapter -> {
+                            R.string.home_statuslist_bluetooth_noadapter
+                        }
+
+                        ServiceState.BluetoothState.NoBle -> {
+                            R.string.home_statuslist_bluetooth_noble
+                        }
+
+                        ServiceState.BluetoothState.NoAdvertising -> {
+                            R.string.home_statuslist_bluetooth_noadvertising
+                        }
+
+                        ServiceState.BluetoothState.NoPermission -> {
+                            R.string.home_statuslist_bluetooth_nopermission
+                        }
+
+                        ServiceState.BluetoothState.Off -> {
+                            R.string.home_statuslist_bluetooth_off
+                        }
+
+                        ServiceState.BluetoothState.On -> {
+                            R.string.home_statuslist_bluetooth_on
+                        }
+                    },
                 onClick = onFixBluetooth,
             )
         }
@@ -37,9 +62,26 @@ fun StatusList(
             StatusCard(
                 icon = painterResource(R.drawable.shizuku_logo_mono),
                 iconPadding = false,
-                text = "Shizuku",
+                textResource = R.string.home_statuslist_shizuku,
                 ok = it == ServiceState.ShizukuState.Running,
-                status = it.name,
+                statusResource =
+                    when (it) {
+                        ServiceState.ShizukuState.NotInstalled -> {
+                            R.string.home_statuslist_shizuku_notinstalled
+                        }
+
+                        ServiceState.ShizukuState.NotRunning -> {
+                            R.string.home_statuslist_shizuku_notrunning
+                        }
+
+                        ServiceState.ShizukuState.NoPermission -> {
+                            R.string.home_statuslist_shizuku_nopermission
+                        }
+
+                        ServiceState.ShizukuState.Running -> {
+                            R.string.home_statuslist_shizuku_running
+                        }
+                    },
                 onClick = onFixShizuku,
             )
         }
@@ -47,9 +89,14 @@ fun StatusList(
         serviceState.notificationPermission.let {
             StatusCard(
                 icon = painterResource(R.drawable.rounded_notifications_active_24),
-                text = "Notifications",
+                textResource = R.string.home_statuslist_notifications,
                 ok = it,
-                status = if (it) "Granted" else "Denied",
+                statusResource =
+                    if (it) {
+                        R.string.home_statuslist_notifications_granted
+                    } else {
+                        R.string.home_statuslist_notifications_denied
+                    },
                 onClick = onFixNotification,
             )
         }

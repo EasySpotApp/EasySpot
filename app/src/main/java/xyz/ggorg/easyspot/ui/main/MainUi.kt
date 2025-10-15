@@ -19,9 +19,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import rikka.shizuku.Shizuku
+import xyz.ggorg.easyspot.R
 import xyz.ggorg.easyspot.service.ServiceState
 import xyz.ggorg.easyspot.shizuku.ShizukuUtils
 import xyz.ggorg.easyspot.ui.components.ServiceStatusIcon
@@ -37,7 +39,10 @@ fun MainUi(
 
     val serviceConnectionState by mainVm.serviceConnectionState.collectAsStateWithLifecycle()
     if (!serviceConnectionState) {
-        Warning("Service disconnected", modifier = Modifier.fillMaxSize())
+        Warning(
+            R.string.home_service_disconnected,
+            modifier = Modifier.fillMaxSize(),
+        )
 
         return
     }
@@ -56,7 +61,12 @@ fun MainUi(
             ActivityResultContracts.StartActivityForResult(),
         ) {}
 
-    val errorToast = Toast.makeText(context, "How did you get here?", Toast.LENGTH_LONG)
+    val unfixableErrorToast =
+        Toast.makeText(
+            context,
+            stringResource(R.string.home_unfixable_error),
+            Toast.LENGTH_LONG,
+        )
 
     Column(modifier = modifier.padding(12.dp)) {
         StatusList(
@@ -72,7 +82,7 @@ fun MainUi(
                     }
 
                     else -> {
-                        errorToast.show()
+                        unfixableErrorToast.show()
                     }
                 }
             },
@@ -91,7 +101,7 @@ fun MainUi(
                     }
 
                     else -> {
-                        errorToast.show()
+                        unfixableErrorToast.show()
                     }
                 }
             },
@@ -113,12 +123,19 @@ fun MainUi(
             )
 
             Text(
-                text = if (isRunning) "All good!" else "Requirements not met",
+                text =
+                    stringResource(
+                        if (isRunning) {
+                            R.string.home_status_running
+                        } else {
+                            R.string.home_status_not_running
+                        },
+                    ),
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize,
             )
 
             AnimatedVisibility(isRunning) {
-                Text("You can now use the EasySpot client.")
+                Text(stringResource(R.string.home_status_running_subtitle))
             }
         }
     }

@@ -39,7 +39,7 @@ class GattServer(
             ?.createNotificationChannel(
                 NotificationChannel(
                     EVENT_CHANNEL_ID,
-                    "Hotspot Event Channel",
+                    context.getString(R.string.gattserver_notification_channel),
                     NotificationManager.IMPORTANCE_HIGH,
                 ),
             )
@@ -108,17 +108,12 @@ class GattServer(
                                     .Builder(context, EVENT_CHANNEL_ID)
                                     .apply {
                                         setSmallIcon(R.drawable.ic_launcher_foreground)
-                                        setContentTitle("EasySpot")
+                                        setContentTitle(context.getString(R.string.app_name))
                                         setContentText(
-                                            "Hotspot got ${
-                                                if (newHotspotState) {
-                                                    "enabled"
-                                                } else {
-                                                    "disabled"
-                                                }
-                                            } by ${
-                                                device?.name ?: device?.address
-                                            }!",
+                                            context.getString(
+                                                R.string.gattserver_notification_enabled,
+                                                device?.name ?: device?.address,
+                                            ),
                                         )
                                         setPriority(NotificationCompat.PRIORITY_HIGH)
                                         setAutoCancel(true)
