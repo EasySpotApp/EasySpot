@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">EasySpot</string>
-    <string name="gattserver_notification_channel">Hotspot Event Channel</string>
+    <string name="gattserver_notification_channel">Request notifications</string>
     <string name="gattserver_notification_disabled">Hotspot got disabled by %s!</string>
     <string name="gattserver_notification_enabled">Hotspot got enabled by %s!</string>
     <string name="home_service_disconnected">Service disconnected</string>
@@ -31,6 +31,7 @@
     <string name="home_status_running">All good!</string>
     <string name="home_status_running_subtitle">You can now use the EasySpot client.</string>
     <string name="home_unfixable_error">How did you get here?</string>
-    <string name="service_notification_channel">Hotspot Service Channel</string>
+    <string name="service_notification_channel">Persistent notification</string>
     <string name="service_notification_running">Service is running</string>
+    <string name="service_notification_not_running">The service couldn\'t start</string>
 </resources>

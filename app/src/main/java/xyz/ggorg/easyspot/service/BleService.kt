@@ -1,14 +1,19 @@
 package xyz.ggorg.easyspot.service
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.IBinder
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
 import xyz.ggorg.easyspot.R
+import xyz.ggorg.easyspot.ui.main.MainActivity
 
 class BleService : Service() {
     companion object {
@@ -44,7 +50,10 @@ class BleService : Service() {
                     SERVICE_CHANNEL_ID,
                     getString(R.string.service_notification_channel),
                     NotificationManager.IMPORTANCE_LOW,
-                ),
+                ).apply {
+                    setShowBadge(false)
+                    lockscreenVisibility = NotificationCompat.VISIBILITY_SECRET
+                },
             )
 
         bluetoothStateReceiver = BluetoothStateReceiver(this)
@@ -67,22 +76,48 @@ class BleService : Service() {
         return START_STICKY
     }
 
-    private fun startForeground() {
+    private fun createNotification(): Notification {
+        val notificationIntent =
+            Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+
+        val pendingIntent =
+            PendingIntent.getActivity(
+                this,
+                0,
+                notificationIntent,
+                PendingIntent.FLAG_IMMUTABLE,
+            )
+
+        val textRes =
+            if (isRunning.value) {
+                R.string.service_notification_running
+            } else {
+                R.string.service_notification_not_running
+            }
+
+        return NotificationCompat
+            .Builder(this, SERVICE_CHANNEL_ID)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText(getString(textRes))
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentIntent(pendingIntent)
+            .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+            .setOnlyAlertOnce(true)
+            .build()
+    }
+
+    fun startForeground() {
         if (isForeground) return
 
         Timber.d("Starting foreground service")
 
-        val notification =
-            Notification
-                .Builder(this, SERVICE_CHANNEL_ID)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.service_notification_running))
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .build()
+        val notification = createNotification()
 
         ServiceCompat.startForeground(
             this,
-            System.currentTimeMillis().toInt(),
+            1,
             notification,
             ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE,
         )
@@ -108,6 +143,12 @@ class BleService : Service() {
                 start()
             } else {
                 stop()
+            }
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                NotificationManagerCompat.from(this).notify(1, createNotification())
             }
 
             return@update state
