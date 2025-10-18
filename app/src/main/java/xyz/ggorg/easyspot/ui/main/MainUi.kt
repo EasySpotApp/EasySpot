@@ -7,16 +7,14 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,7 +24,7 @@ import rikka.shizuku.Shizuku
 import xyz.ggorg.easyspot.R
 import xyz.ggorg.easyspot.service.ServiceState
 import xyz.ggorg.easyspot.shizuku.ShizukuUtils
-import xyz.ggorg.easyspot.ui.components.ServiceStatusIcon
+import xyz.ggorg.easyspot.ui.components.ServiceStatusHeader
 import xyz.ggorg.easyspot.ui.components.StatusList
 import xyz.ggorg.easyspot.ui.components.Warning
 
@@ -68,8 +66,14 @@ fun MainUi(
             Toast.LENGTH_LONG,
         )
 
-    Column(modifier = modifier.padding(12.dp)) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        ServiceStatusHeader(status = isRunning)
+
         StatusList(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
             serviceState = serviceState,
             onFixBluetooth = {
                 when (serviceState.bluetooth) {
@@ -111,32 +115,5 @@ fun MainUi(
                 }
             },
         )
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            ServiceStatusIcon(
-                status = isRunning,
-                modifier = Modifier.padding(bottom = 12.dp),
-            )
-
-            Text(
-                text =
-                    stringResource(
-                        if (isRunning) {
-                            R.string.home_status_running
-                        } else {
-                            R.string.home_status_not_running
-                        },
-                    ),
-                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-            )
-
-            AnimatedVisibility(isRunning) {
-                Text(stringResource(R.string.home_status_running_subtitle))
-            }
-        }
     }
 }

@@ -104,7 +104,7 @@ class BleService : Service() {
                 stopForeground()
             }
 
-            if (isForeground && state.isAllGood()) {
+            if (isForeground && state.isStartAllowed()) {
                 start()
             } else {
                 stop()

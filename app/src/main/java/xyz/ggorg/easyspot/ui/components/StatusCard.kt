@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,83 +29,101 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.ggorg.easyspot.R
+import xyz.ggorg.easyspot.service.ServiceState
 import xyz.ggorg.easyspot.ui.theme.EasySpotTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun StatusCard(
     icon: Painter,
-    textResource: Int,
-    ok: Boolean,
-    statusResource: Int,
+    statusObject: ServiceState.ServiceStateObject,
     modifier: Modifier = Modifier,
     iconPadding: Boolean = true,
-    fixable: Boolean = !ok,
     onClick: () -> Unit = {},
 ) {
     ElevatedCard(
         modifier = modifier.fillMaxWidth(),
     ) {
-        Row(
+        Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = MaterialShapes.Cookie9Sided.toShape(),
-                    modifier = Modifier.size(48.dp),
-                ) {
-                    Icon(
-                        icon,
-                        contentDescription = null,
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .let { if (iconPadding) it.padding(8.dp) else it },
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = MaterialShapes.Cookie9Sided.toShape(),
+                        modifier = Modifier.size(48.dp),
+                    ) {
+                        Icon(
+                            icon,
+                            contentDescription = null,
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .let { if (iconPadding) it.padding(8.dp) else it },
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                    }
+
+                    Text(
+                        text = stringResource(statusObject.getTitleResource()),
+                        modifier = Modifier.padding(start = 8.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
 
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val color =
+                        animateColorAsState(
+                            targetValue =
+                                MaterialTheme.colorScheme.let {
+                                    if (statusObject.isOk()) it.primary else it.error
+                                },
+                            animationSpec = tween(1000),
+                        )
+
+                    Icon(
+                        painterResource(
+                            if (statusObject.isOk()) {
+                                R.drawable.rounded_check_circle_24
+                            } else {
+                                R.drawable.rounded_warning_24px
+                            },
+                        ),
+                        contentDescription = null,
+                        tint = color.value,
+                    )
+
+                    Text(
+                        stringResource(statusObject.getStatusResource()),
+                        color = color.value,
+                    )
+                }
+            }
+
+            AnimatedVisibility(statusObject.getDescriptionResource() != null) {
                 Text(
-                    text = stringResource(textResource),
-                    modifier = Modifier.padding(start = 8.dp),
+                    statusObject.getDescriptionResource()?.let { stringResource(it) } ?: "",
+                    modifier = Modifier.padding(top = 8.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                val color =
-                    animateColorAsState(
-                        targetValue =
-                            MaterialTheme.colorScheme.let {
-                                if (ok) it.primary else it.error
-                            },
-                        animationSpec = tween(1000),
-                    )
-
-                Icon(
-                    painterResource(
-                        if (ok) {
-                            R.drawable.rounded_check_circle_24
-                        } else {
-                            R.drawable.rounded_warning_24px
-                        },
-                    ),
-                    contentDescription = null,
-                    tint = color.value,
-                )
-
-                Text(stringResource(statusResource), color = color.value)
-
-                AnimatedVisibility(fixable) {
+            AnimatedVisibility(statusObject.isFixable()) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
                     Button(
                         onClick = onClick,
                         modifier = Modifier.padding(start = 8.dp),
@@ -129,9 +149,7 @@ private fun StatusCardPreview() {
     EasySpotTheme(darkTheme = true) {
         StatusCard(
             icon = painterResource(R.drawable.rounded_bluetooth_24),
-            textResource = R.string.home_statuslist_bluetooth,
-            ok = true,
-            statusResource = R.string.home_statuslist_bluetooth_on,
+            statusObject = ServiceState.BluetoothState.NoPermission,
         )
     }
 }
