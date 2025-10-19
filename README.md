@@ -28,6 +28,4 @@ Continuity, but for everyone!
 - More robust, Rust-based client with a system tray icon and WiFi auto-connection
 - Android client
 - More hotspot control methods for improved reliability on different OS versions
-- Settings menu (settings for the security level, advertising power, etc.)
 - About menu
-- Permission explanations
