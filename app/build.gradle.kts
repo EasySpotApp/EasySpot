@@ -14,8 +14,8 @@ android {
         applicationId = "xyz.ggorg.easyspot"
         minSdk = 31
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.3.1"
+        versionCode = 5
+        versionName = "1.4.0"
     }
 
     buildTypes {
