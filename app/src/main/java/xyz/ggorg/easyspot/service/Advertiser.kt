@@ -46,12 +46,11 @@ class Advertiser(
         val settings =
             AdvertiseSettings
                 .Builder()
-                .apply {
-                    setAdvertiseMode(powerMode)
-                    setTxPowerLevel(txPower)
-                    setConnectable(true)
-                    setTimeout(0)
-                }.build()
+                .setAdvertiseMode(powerMode)
+                .setTxPowerLevel(txPower)
+                .setConnectable(true)
+                .setTimeout(0)
+                .build()
 
         val data =
             AdvertiseData
