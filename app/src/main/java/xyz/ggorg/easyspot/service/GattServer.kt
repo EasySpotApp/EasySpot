@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattServer
 import android.bluetooth.BluetoothGattServerCallback
+import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.Context
@@ -19,6 +20,8 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import timber.log.Timber
 import xyz.ggorg.easyspot.R
+import xyz.ggorg.easyspot.service.HotspotProfile.CHARACTERISTIC_UUID
+import xyz.ggorg.easyspot.service.HotspotProfile.SERVICE_UUID
 import xyz.ggorg.easyspot.shizuku.ShizukuTetherHelper
 
 class GattServer(
@@ -138,11 +141,41 @@ class GattServer(
         }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    fun start() {
+    fun start(
+        encryption: Boolean,
+        mitmProtection: Boolean,
+    ) {
         gattServer = bluetoothManager?.openGattServer(context, callback)
-        gattServer?.addService(HotspotProfile.hotspotService)
 
-        Timber.d("GATT Server started")
+        val permissions =
+            when {
+                encryption && mitmProtection -> {
+                    BluetoothGattCharacteristic.PERMISSION_WRITE_ENCRYPTED_MITM
+                }
+
+                encryption && !mitmProtection -> {
+                    BluetoothGattCharacteristic.PERMISSION_WRITE_ENCRYPTED
+                }
+
+                else -> {
+                    BluetoothGattCharacteristic.PERMISSION_WRITE
+                }
+            }
+
+        val service =
+            BluetoothGattService(SERVICE_UUID, BluetoothGattService.SERVICE_TYPE_PRIMARY).apply {
+                addCharacteristic(
+                    BluetoothGattCharacteristic(
+                        CHARACTERISTIC_UUID,
+                        BluetoothGattCharacteristic.PROPERTY_WRITE,
+                        permissions,
+                    ),
+                )
+            }
+
+        gattServer?.addService(service)
+
+        Timber.d("GATT Server started with encryption=$encryption mitmProtection=$mitmProtection")
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)

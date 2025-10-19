@@ -34,4 +34,11 @@
     <string name="service_notification_channel">Persistent notification</string>
     <string name="service_notification_running">Service is running</string>
     <string name="service_notification_not_running">The service couldn\'t start</string>
+    <string name="settings">Settings</string>
+    <string name="settings_confirm">Confirm</string>
+    <string name="settings_start_on_boot">Start on boot</string>
+    <string name="settings_ble_encryption">BLE encryption</string>
+    <string name="settings_ble_mitm_protection">BLE MITM protection</string>
+    <string name="settings_advertising_power_mode">Advertising power mode</string>
+    <string name="settings_advertising_tx_power">Advertising transmit power</string>
 </resources>

@@ -18,9 +18,12 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import xyz.ggorg.easyspot.R
+import xyz.ggorg.easyspot.ui.components.settings.SettingsDataStore
 import xyz.ggorg.easyspot.ui.main.MainActivity
 
 class BleService : Service() {
@@ -33,6 +36,7 @@ class BleService : Service() {
     private val serviceState = MutableStateFlow(ServiceState())
     private var isRunning = MutableStateFlow(false)
 
+    private lateinit var settingsDataStore: SettingsDataStore
     private lateinit var bluetoothStateReceiver: BluetoothStateReceiver
     private lateinit var bluetoothGattServer: GattServer
     private lateinit var bluetoothLeAdvertiser: Advertiser
@@ -56,6 +60,7 @@ class BleService : Service() {
                 },
             )
 
+        settingsDataStore = SettingsDataStore(this)
         bluetoothStateReceiver = BluetoothStateReceiver(this)
         bluetoothGattServer = GattServer(this)
         bluetoothLeAdvertiser = Advertiser(this)
@@ -159,8 +164,17 @@ class BleService : Service() {
     private fun start() {
         if (isRunning.value || !isForeground) return
 
-        bluetoothGattServer.start()
-        bluetoothLeAdvertiser.start()
+        // TODO: Time of check, time of use bug?
+        // Also maybe race condition?
+        runBlocking {
+            val bleEncryption = settingsDataStore.bleEncryptionFlow.first()
+            val bleMitmProtection = settingsDataStore.bleMitmProtectionFlow.first()
+            val advertisingPowerMode = settingsDataStore.advertisingPowerModeFlow.first()
+            val advertisingTxPower = settingsDataStore.advertisingTxPowerFlow.first()
+
+            bluetoothGattServer.start(bleEncryption, bleMitmProtection)
+            bluetoothLeAdvertiser.start(advertisingPowerMode, advertisingTxPower)
+        }
 
         isRunning.update { true }
     }
@@ -198,5 +212,7 @@ class BleService : Service() {
         val isRunning = this@BleService.isRunning.asStateFlow()
 
         fun updateState() = this@BleService.updateState()
+
+        fun stop() = this@BleService.stop()
     }
 }

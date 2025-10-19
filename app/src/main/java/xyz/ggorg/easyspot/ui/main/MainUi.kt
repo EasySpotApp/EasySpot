@@ -38,7 +38,7 @@ fun MainUi(
     val serviceConnectionState by mainVm.serviceConnectionState.collectAsStateWithLifecycle()
     if (!serviceConnectionState) {
         Warning(
-            R.string.home_service_disconnected,
+            stringResource(R.string.home_service_disconnected),
             modifier = Modifier.fillMaxSize(),
         )
 

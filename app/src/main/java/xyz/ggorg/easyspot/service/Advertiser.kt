@@ -26,7 +26,9 @@ class Advertiser(
             override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
                 super.onStartSuccess(settingsInEffect)
 
-                Timber.d("Advertising started successfully")
+                Timber.d(
+                    "Advertising started successfully with mode=${settingsInEffect.mode} txPowerLevel=${settingsInEffect.txPowerLevel}",
+                )
             }
 
             override fun onStartFailure(errorCode: Int) {
@@ -37,15 +39,18 @@ class Advertiser(
         }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)
-    fun start() {
+    fun start(
+        powerMode: Int,
+        txPower: Int,
+    ) {
         val settings =
             AdvertiseSettings
                 .Builder()
                 .apply {
-                    setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+                    setAdvertiseMode(powerMode)
+                    setTxPowerLevel(txPower)
                     setConnectable(true)
                     setTimeout(0)
-                    setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_LOW)
                 }.build()
 
         val data =
