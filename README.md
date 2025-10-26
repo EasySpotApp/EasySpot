@@ -58,5 +58,5 @@ This project also uses:
 
 - [Shizuku](https://github.com/RikkaApps/Shizuku)
 - [HiddenApiBypass](https://github.com/LSPosed/AndroidHiddenApiBypass)
-- [HiddenAPiRefine](https://github.com/RikkaApps/HiddenApiRefinePlugin)
+- [HiddenApiRefine](https://github.com/RikkaApps/HiddenApiRefinePlugin)
 - [Timber](https://github.com/JakeWharton/timber/)
