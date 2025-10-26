@@ -1,7 +1,8 @@
-package xyz.ggorg.easyspot.service
+package xyz.ggorg.easyspot.shizuku
 
 import rikka.shizuku.Shizuku
 import timber.log.Timber
+import xyz.ggorg.easyspot.service.BleService
 
 class ShizukuStateReceiver(
     private val bleService: BleService,

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.refine)
 }
 
 android {
@@ -12,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "xyz.ggorg.easyspot"
-        minSdk = 31
+        minSdk = 30
         targetSdk = 36
         versionCode = 5
         versionName = "1.4.0"
@@ -47,9 +48,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.timber)
     implementation(libs.androidx.datastore.preferences)
+    compileOnly(project(":hiddenapi"))
     debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.shizukuApi)
-    implementation(libs.shizukuProvider)
+    implementation(libs.shizuku.api)
+    implementation(libs.shizuku.provider)
     implementation(libs.hiddenapibypass)
     ktlintRuleset(libs.ktlint.compose)
+    implementation(libs.refine.runtime)
 }

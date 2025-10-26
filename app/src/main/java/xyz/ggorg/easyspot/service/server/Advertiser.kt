@@ -1,4 +1,4 @@
-package xyz.ggorg.easyspot.service
+package xyz.ggorg.easyspot.service.server
 
 import android.Manifest
 import android.bluetooth.BluetoothManager
@@ -52,16 +52,15 @@ class Advertiser(
                 .setTimeout(0)
                 .build()
 
-        val data =
+        val advertiseData =
             AdvertiseData
                 .Builder()
-                .apply {
-                    setIncludeDeviceName(false)
-                    setIncludeTxPowerLevel(true)
-                    addServiceUuid(ParcelUuid(HotspotProfile.SERVICE_UUID))
-                }.build()
+                .setIncludeDeviceName(false)
+                .setIncludeTxPowerLevel(false)
+                .addServiceUuid(ParcelUuid(HotspotProfile.SERVICE_UUID))
+                .build()
 
-        bluetoothLeAdvertiser?.startAdvertising(settings, data, advertiseCallback)
+        bluetoothLeAdvertiser?.startAdvertising(settings, advertiseData, advertiseCallback)
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_ADVERTISE)

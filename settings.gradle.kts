@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "EasySpot"
 include(":app")
+include(":hiddenapi")

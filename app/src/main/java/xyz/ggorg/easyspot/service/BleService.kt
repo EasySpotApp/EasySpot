@@ -10,6 +10,7 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
+import android.net.wifi.WifiManagerHidden
 import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -23,6 +24,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import xyz.ggorg.easyspot.R
+import xyz.ggorg.easyspot.service.server.Advertiser
+import xyz.ggorg.easyspot.service.server.GattServer
+import xyz.ggorg.easyspot.service.softap.shizuku.SoftApController
+import xyz.ggorg.easyspot.service.softap.shizuku.SoftApStateListener
+import xyz.ggorg.easyspot.shizuku.ShizukuStateReceiver
 import xyz.ggorg.easyspot.ui.components.settings.SettingsDataStore
 import xyz.ggorg.easyspot.ui.main.MainActivity
 
@@ -35,6 +41,11 @@ class BleService : Service() {
 
     private val serviceState = MutableStateFlow(ServiceState())
     private var isRunning = MutableStateFlow(false)
+
+    private val softApEnabledState = MutableStateFlow(WifiManagerHidden.WIFI_AP_STATE_DISABLED)
+
+    private val softApController = SoftApController(softApEnabledState.asStateFlow())
+    private val softApStateListener = SoftApStateListener(softApEnabledState)
 
     private lateinit var settingsDataStore: SettingsDataStore
     private lateinit var bluetoothStateReceiver: BluetoothStateReceiver
@@ -62,7 +73,7 @@ class BleService : Service() {
 
         settingsDataStore = SettingsDataStore(this)
         bluetoothStateReceiver = BluetoothStateReceiver(this)
-        bluetoothGattServer = GattServer(this)
+        bluetoothGattServer = GattServer(this, softApController, softApEnabledState.asStateFlow())
         bluetoothLeAdvertiser = Advertiser(this)
         shizukuStateReceiver = ShizukuStateReceiver(this)
     }
@@ -164,6 +175,8 @@ class BleService : Service() {
     private fun start() {
         if (isRunning.value || !isForeground) return
 
+        isRunning.update { true }
+
         // TODO: Time of check, time of use bug?
         // Also maybe race condition?
         runBlocking {
@@ -172,11 +185,10 @@ class BleService : Service() {
             val advertisingPowerMode = settingsDataStore.advertisingPowerModeFlow.first()
             val advertisingTxPower = settingsDataStore.advertisingTxPowerFlow.first()
 
+            softApStateListener.register()
             bluetoothGattServer.start(bleEncryption, bleMitmProtection)
             bluetoothLeAdvertiser.start(advertisingPowerMode, advertisingTxPower)
         }
-
-        isRunning.update { true }
     }
 
     @SuppressLint("MissingPermission")
@@ -185,6 +197,7 @@ class BleService : Service() {
 
         bluetoothLeAdvertiser.stop()
         bluetoothGattServer.stop()
+        softApStateListener.unregister()
 
         isRunning.update { false }
     }
