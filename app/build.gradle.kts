@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "xyz.ggorg.easyspot"
-        minSdk = 30
+        minSdk = 31
         targetSdk = 36
         versionCode = 5
         versionName = "1.4.0"
