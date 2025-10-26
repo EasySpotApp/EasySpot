@@ -29,3 +29,34 @@ Continuity, but for everyone!
 - Android client
 - More hotspot control methods for improved reliability on different OS versions
 - About menu
+
+## BLE API
+
+This app exposes a BLE GATT service to allow remote control of the hotspot.
+
+- Service UUID: `7baad717-1551-45e1-b852-78d20c7211ec`
+- Status characteristic UUID: `47436878-5308-40f9-9c29-82c2cb87f595`
+    - Properties: Write, Read, Notify
+    - Values: `[0x00]` (hotspot off), `[0x01]` (hotspot on)
+
+The app's settings (gear icon in the top right) allow you to configure the security options (
+encryption, MITM protection) - it's set to encrypted (pairing required) without MITM protection by
+default.
+
+Implementation details can be found in [
+`xyz.ggorg.easyspot.service.server`](./app/src/main/java/xyz/ggorg/easyspot/service/server).
+
+## License and Credits
+
+This project is licensed under the [GNU GPL v3](./LICENSE).
+
+Big thanks to [supershadoe's Delta project](https://github.com/supershadoe/delta) (licensed
+under [BSD-3-Clause](https://github.com/supershadoe/delta/blob/main/LICENSE))! Some code,
+specifically related to hidden API hotspot control, has been adapted from there.
+
+This project also uses:
+
+- [Shizuku](https://github.com/RikkaApps/Shizuku)
+- [HiddenApiBypass](https://github.com/LSPosed/AndroidHiddenApiBypass)
+- [HiddenAPiRefine](https://github.com/RikkaApps/HiddenApiRefinePlugin)
+- [Timber](https://github.com/JakeWharton/timber/)
